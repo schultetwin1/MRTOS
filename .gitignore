@@ -1,0 +1,9 @@
+# Vim Files
+*.swp
+
+# Build Files
+*.bin
+*.hex
+*.elf
+*.o
+*.map
