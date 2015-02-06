@@ -1,0 +1,11 @@
+Steps for debugging
+1. Open up openocd
+$> openocd -f board/stm32l0discovery.cfg
+
+2. In another window, open gdb
+$> arm-none-eabi-gdb <binary>.elf
+
+3. In gdb reset the processor and load your program
+(gdb) monitor reset halt
+(gdb) load
+(gdb) step
