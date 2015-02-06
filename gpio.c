@@ -1,9 +1,6 @@
 #include "gpio.h"
 
-//#define GPIOC 0x50000800
-//#define GPIOB 0x50000400
 #define GPIOA_BASEADDR 0x50000000
-
 #define GPIOX_BASEADDR(x) (GPIOA_BASEADDR + (0x0400 * x))
 
 void gpio_init(uint8_t port) {
