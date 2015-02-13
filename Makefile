@@ -22,7 +22,7 @@ OOCD_BOARD ?= stm32l0discovery
 
 ##################################
 # C flags
-CFLAGS += -O0 -g
+CFLAGS += -O3
 CFLAGS += -Wall -Werror
 CFLAGS += -fno-common -ffunction-sections -fdata-sections
 
@@ -38,6 +38,9 @@ LDFLAGS += -Map=$(BINARY).map
 ##################################
 
 all: elf
+
+debug: CFLAGS += -O0 -g
+debug: elf
 
 elf: $(BINARY).elf
 bin: $(BINARY).bin
