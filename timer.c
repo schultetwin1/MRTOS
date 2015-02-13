@@ -7,9 +7,11 @@ void timer_init() {
   // set the reload register
   *((uint16_t *)(0X40010800 + 0x2C)) = 0xFFFF;
 
+  // set the prescalar register
+  *((uint16_t *)(0X40010800 + 0x28)) = SCALAR;
+
   // enable the counter
   *((uint16_t *)(0X40010800 + 0x0)) |= (1 << 0);
-
 }
 
 uint16_t timer_count() {
@@ -22,4 +24,8 @@ void timer_set_interrupt(uint16_t value) {
 
   // set the compare value
   *((uint16_t *)(0X40010800 + 0x34)) = value;
+}
+
+void timer_clear_interrupt() {
+  *((uint16_t *)(0X40010800 + 0x10)) &= ~(0x1 << 1);
 }

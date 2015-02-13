@@ -10,6 +10,7 @@ void  __attribute__ ((interrupt ("IRQ"))) timer_handler() {
   gpio_write(GPIOB, 4, toggle);
   toggle ^= 0x1;
   NVIC_ClearPendingIRQ(TIMER_IRQn);
+  timer_clear_interrupt();
 }
 
 int main() {

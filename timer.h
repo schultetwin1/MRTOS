@@ -3,11 +3,16 @@
 
 #include <inttypes.h>
 
+#define MAX_FREQ  2097000
+#define SCALAR    0x10
+static const uint32_t CLK_FREQ = MAX_FREQ / SCALAR;
+
 // Currnetly just using timer21
 
 void timer_init();
 
 uint16_t timer_count();
 void timer_set_interrupt(uint16_t value);
+void timer_clear_interrupt();
 
 #endif
