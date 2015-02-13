@@ -27,5 +27,6 @@ void timer_set_interrupt(uint16_t value) {
 }
 
 void timer_clear_interrupt() {
+  // clear interrupt
   *((uint16_t *)(0X40010800 + 0x10)) &= ~(0x1 << 1);
 }

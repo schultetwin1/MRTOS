@@ -4,7 +4,7 @@
 #include <inttypes.h>
 
 #define MAX_FREQ  2097000
-#define SCALAR    0x10
+#define SCALAR    0x100
 static const uint32_t CLK_FREQ = MAX_FREQ / SCALAR;
 
 // Currently just using timer21
