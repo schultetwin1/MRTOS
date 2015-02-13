@@ -1,5 +1,8 @@
 #ifndef __STM32L0_VECTOR__
 #define __STM32L0_VECTOR__
+
+#include "nvic.h"
+
 typedef void (*vector_table_entry_t)(void);
 
 #define NUM_IRQS 32
@@ -17,4 +20,6 @@ typedef struct {
   vector_table_entry_t reserved3;
   vector_table_entry_t IRQ[NUM_IRQS];
 } vector_table_t;
+
+void set_irq_handler(IRQn_t IRQn, vector_table_entry_t handler);
 #endif

@@ -3,10 +3,11 @@
 
 #include <inttypes.h>
 
-// Currnetly just using timer2
+// Currnetly just using timer21
 
 void timer_init();
 
 uint16_t timer_count();
+void timer_set_interrupt(uint16_t value);
 
 #endif
