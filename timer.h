@@ -7,7 +7,7 @@
 #define SCALAR    0x10
 static const uint32_t CLK_FREQ = MAX_FREQ / SCALAR;
 
-// Currnetly just using timer21
+// Currently just using timer21
 
 void timer_init();
 
