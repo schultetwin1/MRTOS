@@ -85,35 +85,28 @@ void timer_init() {
   *((uint32_t *)(0X40021000 + 0x34)) |= (1 << 2);
 
   // set the reload register
-  // *((uint16_t *)(0X40010800 + 0x2C)) = 0xFFFF;
   TIM21->TIMx_ARR = 0x0000FFFF;
 
   // set the prescalar register
-  //*((uint16_t *)(0X40010800 + 0x28)) = SCALAR;
   TIM21->TIMx_PSC = SCALAR;
 
   // enable the counter
-  //*((uint16_t *)(0X40010800 + 0x0)) |= (1 << 0);
   TIM21->TIMx_CR1 |= (1 << 0);
 }
 
 uint16_t timer_count() {
-  //return *((uint16_t *)(0X40010800 + 0x24));
   return TIM21->TIMx_CNT;
 }
 
 void timer_set_interrupt(uint16_t value) {
   // enable interrupts
-  //*((uint16_t *)(0X40010800 + 0x0C)) |= (0x1 << 1);
   TIM21->TIMx_DIER |= (1 << 1);
 
   // set the compare value
-  // *((uint16_t *)(0X40010800 + 0x34)) = value;
   TIM21->TIMx_CCR1 = value;
 }
 
 void timer_clear_interrupt() {
   // clear interrupt
-  //*((uint16_t *)(0X40010800 + 0x10)) &= ~(0x1 << 1);
   TIM21->TIMx_SR &= ~(1 << 1);
 }
