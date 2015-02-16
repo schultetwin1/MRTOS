@@ -3,7 +3,7 @@ LD=arm-none-eabi-ld
 OBJCOPY=arm-none-eabi-objcopy
 AS=arm-none-eabi-as
 
-SOURCES=vector.c gpio.c timer.c nvic.c
+SOURCES=vector.c gpio.c timer.c nvic.c blink.c
 
 FP_FLAGS ?= -msoft-float
 ARCH_FLAGS = -mthumb -mcpu=cortex-m0plus $(FP_FLAGS)
@@ -11,7 +11,7 @@ ARCH_FLAGS = -mthumb -mcpu=cortex-m0plus $(FP_FLAGS)
 
 BINARY = blink
 LDSCRIPT ?=  $(BINARY).ld
-OBJS += $(BINARY).o $(SOURCES:%.c=%.o)
+OBJS += $(SOURCES:%.c=%.o)
 
 ##################################
 # OpenOCD specific variables
