@@ -1,6 +1,6 @@
 #include "vtimer.h"
 
-static vtimer_t* vtimer_start = 0;
+static vtimer_t* timer_queue = 0;
 
 void vtimer_init() {
   timer_init();
