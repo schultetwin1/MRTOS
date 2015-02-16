@@ -3,8 +3,9 @@
 
 #include <inttypes.h>
 
-#define MAX_FREQ  2097000
-#define SCALAR    0x100
+#define MAX_FREQ  2097000 // 2.097 MHz
+#define SCALAR    0x10    // 131.1 KHz
+
 static const uint32_t CLK_FREQ = MAX_FREQ / SCALAR;
 
 // Currently just using timer21
