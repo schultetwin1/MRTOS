@@ -4,15 +4,17 @@
 
 typedef void (*timer_fn_t)(void);
 
-typedef struct {
+typedef struct vtimer vtimer_t;
+
+struct vtimer {
   vtimer_t* next;
   timer_fn_t timer_cb;
   uint16_t ticks;
-} vtimer_t;
+};
 
 void vtimer_init();
 
-void add_timer(vtimer_t* timer);
-void remove_timer(vtimer_t* timer);
+void vtimer_add_timer(vtimer_t* vtimer, timer_fn_t callback, uint32_t ticks);
+void vtimer_remove_timer(vtimer_t* timer);
 
 #endif

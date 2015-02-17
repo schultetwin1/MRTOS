@@ -1,4 +1,7 @@
+#include "nvic.h"
 #include "timer.h"
+
+static const IRQn_t TIMER_IRQn = 20;
 
 typedef struct {
   // 0x00
@@ -98,15 +101,32 @@ uint16_t timer_count() {
   return TIM21->TIMx_CNT;
 }
 
-void timer_set_interrupt(uint16_t value) {
-  // enable interrupts
-  TIM21->TIMx_DIER |= (1 << 1);
-
+void timer_enable_interrupt(uint16_t value) {
   // set the compare value
   TIM21->TIMx_CCR1 = value;
+
+  // Set timer interupt priority
+  NVIC_SetPriority(TIMER_IRQn, 0xFF);
+  // Enable the timer interrupt in the NVIC
+  NVIC_EnableIRQ(TIMER_IRQn);
+
+  // enable interrupts
+  TIM21->TIMx_DIER |= (1 << 1);
 }
 
 void timer_clear_interrupt() {
   // clear interrupt
   TIM21->TIMx_SR &= ~(1 << 1);
+}
+
+void timer_disable_interrupt() {
+  TIM21->TIMx_DIER &= ~(1 << 1);
+}
+
+void timer_mask_interrupt() {
+  NVIC_DisableIRQ(TIMER_IRQn);
+}
+
+void timer_unmask_interrupt(){
+  NVIC_EnableIRQ(TIMER_IRQn);
 }
