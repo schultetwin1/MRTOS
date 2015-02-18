@@ -37,6 +37,8 @@ LDFLAGS += -Map=$(BINARY).map
 ##################################
 ##################################
 
+.PRECIOUS: %.o
+
 all: elf
 
 debug: CFLAGS += -O0 -g
