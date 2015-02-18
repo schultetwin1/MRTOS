@@ -3,7 +3,7 @@ LD=arm-none-eabi-ld
 OBJCOPY=arm-none-eabi-objcopy
 AS=arm-none-eabi-as
 
-SOURCES=vector.c gpio.c timer.c nvic.c blink.c vtimer.c
+SOURCES=vector.c gpio.c timer.c nvic.c blink.c vtimer.c utils.c
 
 FP_FLAGS ?= -msoft-float
 ARCH_FLAGS = -mthumb -mcpu=cortex-m0plus $(FP_FLAGS)
