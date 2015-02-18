@@ -4,9 +4,9 @@
 #include "vector.h"
 #include "vtimer.h"
 
-void turn_off_led() {
+void toggle_led() {
   static int toggle = 0;
-  gpio_write(GPIOA, 5, toggle);
+  gpio_write(GPIOB, 4, toggle);
   toggle ^= 1;
 }
 
@@ -20,9 +20,9 @@ int main() {
   gpio_write(GPIOB, 4, 1);
   gpio_write(GPIOA, 5, 1);
 
-  vtimer_t turn_off;
+  vtimer_t toggle;
   vtimer_init();
-  vtimer_add_timer(&turn_off, turn_off_led, 1, 0);
+  vtimer_add_timer(&toggle, toggle_led, 100, 0);
   while (1)
     ;
   return 0;
