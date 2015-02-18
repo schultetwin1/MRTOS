@@ -5,12 +5,22 @@ static unsigned int tick = 0;
 
 static void vtimer_enable();
 static void vtimer_disable();
+static int insert_timer(vtimer_t* vtimer);
 
 void  __attribute__ ((interrupt ("IRQ"))) timer_handler() {
+  vtimer_t* victim;
   tick++;
-  while (timer_queue && tick >= timer_queue->ticks) {
-    timer_queue->timer_cb();
+  while (timer_queue && tick >= timer_queue->cb_tick) {
+    victim = timer_queue;
     timer_queue = timer_queue->next;
+    if (victim->num_runs != 1) {
+      if (victim->num_runs > 0) {
+        victim->num_runs--;
+      }
+      victim->cb_tick = tick + victim->ticks;
+      insert_timer(victim);
+    }
+    victim->timer_cb();
   }
   if (!timer_queue) {
     vtimer_disable();
@@ -53,12 +63,14 @@ void vtimer_init() {
   timer_init();
 }
 
-void vtimer_add_timer(vtimer_t* vtimer, timer_fn_t callback, uint32_t ticks) {
+void vtimer_add_timer(vtimer_t* vtimer, timer_fn_t callback, uint32_t ticks, uint32_t num_runs) {
   int rc;
 
   // @TODO: Watch for overflow
-  vtimer->ticks = tick + ticks;
+  vtimer->cb_tick = tick + ticks;
+  vtimer->ticks = ticks;
   vtimer->timer_cb = callback;
+  vtimer->num_runs = num_runs;
 
   timer_mask_interrupt();
   rc = insert_timer(vtimer);
@@ -73,7 +85,7 @@ void vtimer_remove_timer(vtimer_t* timer) {
 }
 
 static void vtimer_enable() {
-  timer_enable_interrupt(0xFFFF);
+  timer_enable_interrupt(20);
 }
 
 static void vtimer_disable() {

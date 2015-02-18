@@ -5,7 +5,9 @@
 #include "vtimer.h"
 
 void turn_off_led() {
-  gpio_write(GPIOA, 5, 0);
+  static int toggle = 0;
+  gpio_write(GPIOA, 5, toggle);
+  toggle ^= 1;
 }
 
 int main() {
@@ -20,7 +22,7 @@ int main() {
 
   vtimer_t turn_off;
   vtimer_init();
-  vtimer_add_timer(&turn_off, turn_off_led, 10);
+  vtimer_add_timer(&turn_off, turn_off_led, 1, 0);
   while (1)
     ;
   return 0;

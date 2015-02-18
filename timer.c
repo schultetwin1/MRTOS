@@ -88,7 +88,7 @@ void timer_init() {
   *((uint32_t *)(0X40021000 + 0x34)) |= (1 << 2);
 
   // set the reload register
-  TIM21->TIMx_ARR = 0x0000FFFF;
+  TIM21->TIMx_ARR = 20;
 
   // set the prescalar register
   TIM21->TIMx_PSC = SCALAR;

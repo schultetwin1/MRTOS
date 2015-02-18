@@ -7,6 +7,7 @@
 
 #define MAX_FREQ  2097000 // 2.097 MHz
 #define SCALAR    0x10    // 131.1 KHz
+#define TICK_TO_US 20
 
 static const uint32_t CLK_FREQ = MAX_FREQ / SCALAR;
 static const IRQn_t TIMER_IRQn;

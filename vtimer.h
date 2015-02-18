@@ -10,11 +10,13 @@ struct vtimer {
   vtimer_t* next;
   timer_fn_t timer_cb;
   uint16_t ticks;
+  uint16_t cb_tick;
+  uint32_t num_runs;
 };
 
 void vtimer_init();
 
-void vtimer_add_timer(vtimer_t* vtimer, timer_fn_t callback, uint32_t ticks);
+void vtimer_add_timer(vtimer_t* vtimer, timer_fn_t callback, uint32_t ticks, uint32_t num_runs);
 void vtimer_remove_timer(vtimer_t* timer);
 
 #endif
