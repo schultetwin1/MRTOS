@@ -3,7 +3,7 @@
 
 static const IRQn_t TIMER_IRQn = 20;
 
-typedef struct {
+typedef volatile struct {
   // 0x00
   uint16_t TIMx_CR1;
   uint16_t _reserved0;
