@@ -1,10 +1,49 @@
 #include "gpio.h"
 
-#define GPIOA_BASEADDR 0x50000000
-#define GPIOX_BASEADDR(x) (GPIOA_BASEADDR + (0x0400 * x))
+typedef volatile struct {
+  // 0x00
+  uint32_t GPIOx_MODER;
 
-static inline uint32_t* gpiox_baseaddr(uint8_t port) {
-  return (uint32_t*)(GPIOA_BASEADDR + (0x0400 * port));
+  // 0x04
+  uint16_t _reserved1;
+  uint16_t GPIOx_OTYPER;
+
+  // 0x08
+  uint32_t GPIOx_OSPEEDR;
+
+  // 0x0C
+  uint32_t GPIOx_PUPDR;
+
+  // 0x10
+  uint16_t _reserved2;
+  uint16_t GPIOx_IDR;
+
+  // 0x14
+  uint16_t _reserved3;
+  uint16_t GPIOx_ODR;
+
+  // 0x18
+  uint32_t GPIOx_BSRR;
+
+  // 0x1C
+  uint16_t _reserved4;
+  uint16_t GPIO_LCKR;
+
+  // 0x20
+  uint32_t GPIOx_AFRL;
+
+  // 0x24
+  uint32_t GPIOx_AFRH;
+
+  // 0x28
+  uint16_t _reserved5;
+  uint16_t GPIOx_BRR;
+
+} gpio_t;
+
+static inline gpio_t* gpiox_baseaddr(uint8_t port) {
+  const uint32_t GPIO_BASEADDR = 0x50000000;
+  return (gpio_t*)(GPIO_BASEADDR + (0x0400 * port));
 }
 
 void gpio_init(uint8_t port) {
@@ -13,28 +52,22 @@ void gpio_init(uint8_t port) {
 }
 
 void gpio_set_mode(uint8_t port, uint8_t pin_num, gpio_mode_t mode) {
-  uint32_t modes;
-  uint32_t types;
+  gpio_t * const gpio = gpiox_baseaddr(port);
 
-  modes = *gpiox_baseaddr(port);
-  modes &= ~(3 << (pin_num * 2));
-  modes |= (mode << (pin_num * 2));
-  *gpiox_baseaddr(port) = modes;
+  gpio->GPIOx_MODER &= ~(3 << (pin_num * 2));
+  gpio->GPIOx_MODER |= (mode << (pin_num * 2));
+
+  // Set to high speed for now
+  // @TODO: What does this mean?
+  gpio->GPIOx_OSPEEDR |= (0x3 << (pin_num * 2));
 
   if (mode == GPIO_OUTPUT_MODE) {
-    types = *(gpiox_baseaddr(port) + 1);
-    types &= ~(1 << pin_num);
-    *(gpiox_baseaddr(port) + 1) = types;
+    gpio->GPIOx_OTYPER &= ~(1 << pin_num);
   }
 }
 
 void gpio_write(uint8_t port, uint8_t pin_num, uint8_t write) {
-  uint32_t data;
-  data = *(gpiox_baseaddr(port) + (0x18 / 4));
-  if (write) {
-    *(gpiox_baseaddr(port) + 0x18 / 4) = data | (1 << pin_num);
-  } else {
-    *(gpiox_baseaddr(port) + 0x18 / 4) = data | (1 << (pin_num + 16));
+  gpio_t * const gpio = gpiox_baseaddr(port);
 
-  }
+  gpio->GPIOx_BSRR = 1 << (pin_num + (write * 0x10));
 }
