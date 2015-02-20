@@ -58,11 +58,10 @@ void gpio_set_mode(uint8_t port, uint8_t pin_num, gpio_mode_t mode) {
   gpio->GPIOx_MODER &= ~(3 << (pin_num * 2));
   gpio->GPIOx_MODER |= (mode << (pin_num * 2));
 
-  // Set to high speed for now
-  // @TODO: What does this mean?
-  gpio->GPIOx_OSPEEDR |= (0x3 << (pin_num * 2));
-
   if (mode == GPIO_OUTPUT_MODE) {
+    // Set to high speed for now
+    // @TODO: What does this mean?
+    gpio->GPIOx_OSPEEDR |= (0x3 << (pin_num * 2));
     gpio->GPIOx_OTYPER &= ~(1 << pin_num);
   }
 }
