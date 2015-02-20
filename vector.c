@@ -1,3 +1,4 @@
+#include "rcc.h"
 #include "vector.h"
 
 extern unsigned _stack;
@@ -55,6 +56,9 @@ void  __attribute__ ((interrupt ("IRQ"))) reset_handler(void)
   while (dest < &_ebss) {
     *dest++ = 0;
   }
+
+  rcc_hsi16_enable();
+  rcc_switch_sys_clk(SYSCLK_HSI16);
 
 
   main();
