@@ -69,5 +69,10 @@ void gpio_set_mode(uint8_t port, uint8_t pin_num, gpio_mode_t mode) {
 void gpio_write(uint8_t port, uint8_t pin_num, uint8_t write) {
   gpio_t * const gpio = gpiox_baseaddr(port);
 
-  gpio->GPIOx_BSRR = 1 << (pin_num + (write * 0x10));
+  gpio->GPIOx_BSRR = 1 << (pin_num + (!write * 0x10));
+}
+
+uint8_t gpio_read(uint8_t port, uint8_t pin_num) {
+  gpio_t * const gpio = gpiox_baseaddr(port);
+  return (gpio->GPIOx_IDR >> pin_num) & 0x1;
 }
