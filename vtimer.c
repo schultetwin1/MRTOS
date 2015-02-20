@@ -1,4 +1,5 @@
 #include "vtimer.h"
+#include "gpio.h"
 
 static vtimer_t* timer_queue = 0;
 static unsigned int tick = 0;
@@ -10,6 +11,7 @@ void  __attribute__ ((interrupt ("IRQ"))) timer_handler() {
   tick++;
   while (timer_queue && tick >= timer_queue->cb_tick) {
     victim = timer_queue;
+    victim->timer_cb();
     timer_queue = timer_queue->next;
     if (victim->num_runs != 1) {
       if (victim->num_runs > 0) {
@@ -18,7 +20,6 @@ void  __attribute__ ((interrupt ("IRQ"))) timer_handler() {
       victim->cb_tick = tick + victim->ticks;
       insert_timer(victim);
     }
-    victim->timer_cb();
   }
   NVIC_ClearPendingIRQ(TIMER_IRQn);
   timer_clear_interrupt();
