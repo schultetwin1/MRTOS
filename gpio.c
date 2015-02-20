@@ -15,19 +15,19 @@ typedef volatile struct {
   uint32_t GPIOx_PUPDR;
 
   // 0x10
-  uint16_t _reserved2;
   uint16_t GPIOx_IDR;
+  uint16_t _reserved2;
 
   // 0x14
-  uint16_t _reserved3;
   uint16_t GPIOx_ODR;
+  uint16_t _reserved3;
 
   // 0x18
   uint32_t GPIOx_BSRR;
 
   // 0x1C
-  uint16_t _reserved4;
   uint16_t GPIO_LCKR;
+  uint16_t _reserved4;
 
   // 0x20
   uint32_t GPIOx_AFRL;
@@ -36,8 +36,8 @@ typedef volatile struct {
   uint32_t GPIOx_AFRH;
 
   // 0x28
-  uint16_t _reserved5;
   uint16_t GPIOx_BRR;
+  uint16_t _reserved5;
 
 } gpio_t;
 
