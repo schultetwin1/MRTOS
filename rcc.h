@@ -9,7 +9,7 @@ typedef enum {
   SYSCLK_PLL = 3
 } sysclk_src_t;
 
-uint8_t rcc_hsi16_enable();
-void    rcc_switch_sys_clk(sysclk_src_t src);
-void    rcc_gpio_clk_enable(uint8_t port);
+void rcc_hsi16_enable();
+void rcc_switch_sys_clk(sysclk_src_t src);
+void rcc_gpio_clk_enable(uint8_t port);
 #endif
