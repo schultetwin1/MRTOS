@@ -1,4 +1,5 @@
 #include "gpio.h"
+#include "rcc.h"
 
 typedef volatile struct {
   // 0x00
@@ -48,7 +49,7 @@ static inline gpio_t* gpiox_baseaddr(uint8_t port) {
 
 void gpio_init(uint8_t port) {
   // Enable the GPIO timer
-  *((unsigned *)(0X40021000 + 0x2C)) |= (1 << port);
+  rcc_gpio_clk_enable(port);
 }
 
 void gpio_set_mode(uint8_t port, uint8_t pin_num, gpio_mode_t mode) {
