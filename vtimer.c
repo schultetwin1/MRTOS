@@ -4,7 +4,7 @@
 static vtimer_t* timer_queue = 0;
 static unsigned int tick = 0;
 
-static int insert_timer(vtimer_t* vtimer);
+static void insert_timer(vtimer_t* vtimer);
 
 static inline void update_timer(vtimer_t* timer);
 
@@ -31,7 +31,7 @@ static inline void update_timer(vtimer_t* timer) {
   }
 }
 
-static int insert_timer(vtimer_t* vtimer) {
+static void insert_timer(vtimer_t* vtimer) {
   vtimer_t* it;
   vtimer_t* it_prev;
 
@@ -40,14 +40,14 @@ static int insert_timer(vtimer_t* vtimer) {
   if (!timer_queue) {
     timer_queue = vtimer;
     timer_queue->next = 0;
-    return 0;
+    return;
   }
 
   // Insert at front
   if (vtimer->cb_tick < timer_queue->cb_tick) {
     vtimer->next = timer_queue;
     timer_queue = vtimer;
-    return 1;
+    return;
   }
 
   // Insert anywhere else
@@ -58,7 +58,7 @@ static int insert_timer(vtimer_t* vtimer) {
   }
   it_prev->next = vtimer;
   vtimer->next = it;
-  return 2;
+  return;
 }
 
 void vtimer_init() {
