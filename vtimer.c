@@ -1,20 +1,17 @@
 #include "vtimer.h"
 #include "gpio.h"
 
-static vtimer_t* timer_queue = 0;
+static node_t* timer_queue = 0;
 static unsigned int tick = 0;
-
-static void insert_timer(vtimer_t* vtimer);
 
 static inline void update_timer(vtimer_t* timer);
 
 void  __attribute__ ((interrupt ("IRQ"))) timer_handler() {
   vtimer_t* victim;
   tick++;
-  while (timer_queue && tick >= timer_queue->cb_tick) {
-    victim = timer_queue;
+  while (!queue_empty(timer_queue) && tick >= ((vtimer_t*)(queue_top(timer_queue)))->cb_tick) {
+    victim = (vtimer_t*)queue_pop(timer_queue);
     victim->timer_cb();
-    timer_queue = timer_queue->next;
     update_timer(victim);
   }
   timer_clear_interrupt();
@@ -27,38 +24,8 @@ static inline void update_timer(vtimer_t* timer) {
       timer->num_runs--;
     }
     timer->cb_tick = tick + timer->ticks;
-    insert_timer(timer);
+    queue_add(timer_queue, (node_t*)timer, vtimer_cmp);
   }
-}
-
-static void insert_timer(vtimer_t* vtimer) {
-  vtimer_t* it;
-  vtimer_t* it_prev;
-
-
-  // Empty case
-  if (!timer_queue) {
-    timer_queue = vtimer;
-    timer_queue->next = 0;
-    return;
-  }
-
-  // Insert at front
-  if (vtimer->cb_tick < timer_queue->cb_tick) {
-    vtimer->next = timer_queue;
-    timer_queue = vtimer;
-    return;
-  }
-
-  // Insert anywhere else
-  it = timer_queue->next;
-  it_prev = timer_queue;
-  while (it && it->cb_tick < vtimer->cb_tick) {
-    it = it->next;
-  }
-  it_prev->next = vtimer;
-  vtimer->next = it;
-  return;
 }
 
 void vtimer_init() {
@@ -73,7 +40,7 @@ void vtimer_add_timer(vtimer_t* vtimer, timer_fn_t callback, uint32_t ticks, uin
   vtimer->num_runs = num_runs;
 
   timer_mask_interrupt();
-  insert_timer(vtimer);
+  queue_add(timer_queue, (node_t*)vtimer, vtimer_cmp);
   timer_unmask_interrupt();
 }
 
@@ -87,4 +54,8 @@ void vtimer_enable() {
 
 void vtimer_disable() {
   timer_disable_interrupt();
+}
+
+int vtimer_cmp(node_t* a, node_t* b) {
+  return ((vtimer_t*)(a))->cb_tick - ((vtimer_t*)(b))->cb_tick;
 }
