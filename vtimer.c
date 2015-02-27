@@ -17,8 +17,8 @@ void  __attribute__ ((interrupt ("IRQ"))) timer_handler() {
     timer_queue = timer_queue->next;
     update_timer(victim);
   }
-  NVIC_ClearPendingIRQ(TIMER_IRQn);
   timer_clear_interrupt();
+  NVIC_ClearPendingIRQ(TIMER_IRQn);
 }
 
 static inline void update_timer(vtimer_t* timer) {
