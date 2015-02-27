@@ -6,6 +6,8 @@ static unsigned int tick = 0;
 
 static int insert_timer(vtimer_t* vtimer);
 
+static inline void update_timer(vtimer_t* timer);
+
 void  __attribute__ ((interrupt ("IRQ"))) timer_handler() {
   vtimer_t* victim;
   tick++;
@@ -13,16 +15,20 @@ void  __attribute__ ((interrupt ("IRQ"))) timer_handler() {
     victim = timer_queue;
     victim->timer_cb();
     timer_queue = timer_queue->next;
-    if (victim->num_runs != 1) {
-      if (victim->num_runs > 0) {
-        victim->num_runs--;
-      }
-      victim->cb_tick = tick + victim->ticks;
-      insert_timer(victim);
-    }
+    update_timer(victim);
   }
   NVIC_ClearPendingIRQ(TIMER_IRQn);
   timer_clear_interrupt();
+}
+
+static inline void update_timer(vtimer_t* timer) {
+  if (timer->num_runs != 1) {
+    if (timer->num_runs > 0) {
+      timer->num_runs--;
+    }
+    timer->cb_tick = tick + timer->ticks;
+    insert_timer(timer);
+  }
 }
 
 static int insert_timer(vtimer_t* vtimer) {
