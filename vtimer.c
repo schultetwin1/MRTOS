@@ -1,7 +1,7 @@
 #include "vtimer.h"
 #include "gpio.h"
 
-static node_t* timer_queue = 0;
+static node_t* timer_queue;
 static unsigned int tick = 0;
 
 static inline void update_timer(vtimer_t* timer);
@@ -10,7 +10,7 @@ void  __attribute__ ((interrupt ("IRQ"))) timer_handler() {
   vtimer_t* victim;
   tick++;
   while (!queue_empty(timer_queue) && tick >= ((vtimer_t*)(queue_top(timer_queue)))->cb_tick) {
-    victim = (vtimer_t*)queue_pop(timer_queue);
+    victim = (vtimer_t*)queue_pop(&timer_queue);
     victim->timer_cb();
     update_timer(victim);
   }
@@ -24,11 +24,12 @@ static inline void update_timer(vtimer_t* timer) {
       timer->num_runs--;
     }
     timer->cb_tick = tick + timer->ticks;
-    queue_add(timer_queue, (node_t*)timer, vtimer_cmp);
+    queue_add(&timer_queue, (node_t*)timer, vtimer_cmp);
   }
 }
 
 void vtimer_init() {
+  timer_queue = queue_init();
   timer_init();
 }
 
@@ -40,7 +41,7 @@ void vtimer_add_timer(vtimer_t* vtimer, timer_fn_t callback, uint32_t ticks, uin
   vtimer->num_runs = num_runs;
 
   timer_mask_interrupt();
-  queue_add(timer_queue, (node_t*)vtimer, vtimer_cmp);
+  queue_add(&timer_queue, (node_t*)vtimer, vtimer_cmp);
   timer_unmask_interrupt();
 }
 
