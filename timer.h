@@ -9,7 +9,6 @@
 #define SCALAR    0x1     // 2.097 MHz
 
 static const uint32_t CLK_FREQ = MAX_FREQ / SCALAR;
-static const IRQn_t TIMER_IRQn;
 
 // Currently just using timer21
 
