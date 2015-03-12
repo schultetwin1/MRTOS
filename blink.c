@@ -1,5 +1,6 @@
 #include "gpio.h"
 #include "nvic.h"
+#include "task.h"
 #include "timer.h"
 #include "vector.h"
 #include "vtimer.h"
@@ -29,8 +30,9 @@ int main() {
   vtimer_init();
   vtimer_add_timer(&toggleA, toggle_ledA, 1, 0);
   vtimer_add_timer(&toggleB, toggle_ledB, 2, 0);
-  vtimer_enable();
+  // vtimer_enable();
   while (1)
+    task_yield();
     ;
   return 0;
 }

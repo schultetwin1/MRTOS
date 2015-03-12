@@ -4,6 +4,7 @@
 extern unsigned _stack;
 extern unsigned _data_loadaddr, _data, _edata, _ebss;
 extern void timer_handler(void);
+extern void pend_sv_handler(void);
 
 void blocking_handler(void);
 void null_handler(void);
@@ -19,7 +20,7 @@ vector_table_t vector_table = {
   .nmi = null_handler,
   .hard_fault = hard_fault_handler,
   .sv_call = null_handler,
-  .pend_sv = null_handler,
+  .pend_sv = pend_sv_handler,
   .systick = null_handler,
   .IRQ = {
     blocking_handler, // 0
@@ -49,17 +50,22 @@ void  __attribute__ ((interrupt ("IRQ"))) reset_handler(void)
 {
   volatile unsigned *src, *dest;
 
+  // Initialize data from flash
   for (src = &_data_loadaddr, dest = &_data; dest < &_edata; src++, dest++) {
     *dest = *src;
   }
 
+  // Initialize zero'd data
   while (dest < &_ebss) {
     *dest++ = 0;
   }
 
+  // Switch to 16MHz clk
   rcc_hsi16_enable();
   rcc_switch_sys_clk(SYSCLK_HSI16);
 
+  // Enable pendsv int
+  NVIC_SetPriority(PEND_SV_IRQn, 0xFF);
 
   main();
 

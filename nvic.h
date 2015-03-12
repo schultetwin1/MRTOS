@@ -3,7 +3,8 @@
 #include <inttypes.h>
 typedef int8_t IRQn_t;
 
-static const IRQn_t TIMER_IRQn = 20;
+#define PEND_SV_IRQn -2
+#define TIMER_IRQn   20
 
 void NVIC_EnableIRQ(IRQn_t IRQn);
 void NVIC_DisableIRQ(IRQn_t IRQn);
