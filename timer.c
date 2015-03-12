@@ -1,8 +1,6 @@
 #include "nvic.h"
 #include "timer.h"
 
-static const IRQn_t TIMER_IRQn = 20;
-
 typedef volatile struct {
   // 0x00
   uint16_t TIMx_CR1;

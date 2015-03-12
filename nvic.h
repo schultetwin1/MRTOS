@@ -1,7 +1,9 @@
 #ifndef __STM32l0_NVIC__
 #define __STM32l0_NVIC__
 #include <inttypes.h>
-typedef uint8_t IRQn_t;
+typedef int8_t IRQn_t;
+
+static const IRQn_t TIMER_IRQn = 20;
 
 void NVIC_EnableIRQ(IRQn_t IRQn);
 void NVIC_DisableIRQ(IRQn_t IRQn);
