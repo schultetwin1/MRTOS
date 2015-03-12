@@ -1,11 +1,29 @@
 #include "nvic.h"
 #include "task.h"
 
-static inline void save_context() {
+typedef struct {
+  void* sp;
+} task_t;
 
+task_t tasks[MAX_NUM_TASKS];
+int num_tasks = 0;
+
+static inline void save_context() {
+  uint32_t scratch;
+  asm volatile (
+    "MRS %0, psp\n"
+    "STMDB %0!, {r4-r11}\n"
+    "MSR psp, %0\n" : "=r" (scratch) 
+  );
 }
 
 static inline void load_context() {
+  uint32_t scratch;
+  asm volatile (
+    "MRS %0, psp\n"
+    "LDMFD %0!, {r4-r11}\n"
+    "MSR psp, %0\n" : "=r" (scratch)
+  );
 
 }
 
