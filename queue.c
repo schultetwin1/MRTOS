@@ -1,6 +1,6 @@
 #include "queue.h"
 
-void queue_add(node_t** queue_ptr, node_t* item, int (*cmp)(node_t*, node_t*)) {
+void queue_add(node_t** queue_ptr, node_t* item, node_cmp_fn_t cmp) {
   node_t* it;
   node_t* it_prev;
 
