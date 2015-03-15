@@ -5,16 +5,22 @@
 #include "vector.h"
 #include "vtimer.h"
 
-void toggle_ledA() {
-  static int toggle = 0;
-  gpio_write(GPIOA, 5, toggle);
-  toggle ^= 1;
+void toggle_ledA(void* args) {
+  int toggle = 0;
+  while (1) {
+    gpio_write(GPIOA, 5, toggle);
+    toggle ^= 1;
+    task_yield();
+  }
 }
 
-void toggle_ledB() {
-  static int toggle = 0;
-  gpio_write(GPIOB, 4, toggle);
-  toggle ^= 1;
+void toggle_ledB(void* args) {
+  int toggle = 0;
+  while (1) {
+    gpio_write(GPIOB, 4, toggle);
+    toggle ^= 1;
+    task_yield();
+  }
 }
 
 int main() {
@@ -25,14 +31,21 @@ int main() {
   gpio_set_mode(GPIOB, 4, GPIO_OUTPUT_MODE);
 
 
-  vtimer_t toggleA;
-  vtimer_t toggleB;
-  vtimer_init();
-  vtimer_add_timer(&toggleA, toggle_ledA, 1, 0);
-  vtimer_add_timer(&toggleB, toggle_ledB, 2, 0);
+  //vtimer_t toggleA;
+  //vtimer_t toggleB;
+  //vtimer_init();
+  //vtimer_add_timer(&toggleA, toggle_ledA, 1, 0);
+  //vtimer_add_timer(&toggleB, toggle_ledB, 2, 0);
   // vtimer_enable();
-  while (1) {
-    task_yield();
-  }
+
+
+  add_task(toggle_ledA, 0);
+  add_task(toggle_ledB, 0);
+
+  run_tasks();
+
+
+  // Should never hit here
+  while (1);
   return 0;
 }
