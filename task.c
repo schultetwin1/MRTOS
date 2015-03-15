@@ -69,30 +69,33 @@ static inline void save_context() {
 
 static inline void load_context() {
   uint8_t* psp = tasks[cur_task].sp;
+  psp += 16;
 
   asm volatile (
-    "ADD %0, #16\n"
     "LDMIA %0!, {r4-r7}\n"
     "MOV r11, r7\n"
     "MOV r10, r6\n"
     "MOV r9, r5\n"
     "MOV r8, r4\n"
 
-    "MSR psp, %0\n" 
+    "MSR psp, %0\n"
 
     "SUB %0, #32\n"
     "LDMIA %0!, {r4-r7}\n"
     :
     : "r"(psp)
   );
-
 }
 
 
 void switch_context() {
+  cur_task++;
+  if (cur_task == num_tasks) {
+    cur_task = 0;
+  }
 }
 
-TaskID add_task(FuncPtr* fn, FuncArgs* args) {
+TaskID add_task(FuncPtr fn, FuncArgs args) {
   hw_stack_frame_t* frame;
 
   if (num_tasks == MAX_NUM_TASKS) {
@@ -119,6 +122,29 @@ TaskID add_task(FuncPtr* fn, FuncArgs* args) {
 void task_yield() {
   NVIC_SetPendingIRQ(PEND_SV_IRQn);
 }
+
+void run_tasks() {
+  uint8_t* psp;
+  // No tasks to run
+  if (num_tasks <= 0) return;
+
+  cur_task = 0;
+  psp = tasks[cur_task].sp;
+  psp += 32;
+
+  asm volatile (
+    "MSR psp, %0\n"
+    "MOV r0, #2\n"
+    "MSR control, r0\n"
+    "POP {r0-r5}\n"
+    "MOV lr, r5\n"
+    "POP {pc}\n"
+    :
+    : "r"(psp)
+  );
+  
+}
+
 
 void pend_sv_handler() {
   save_context();
