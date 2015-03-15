@@ -31,8 +31,8 @@ int main() {
   vtimer_add_timer(&toggleA, toggle_ledA, 1, 0);
   vtimer_add_timer(&toggleB, toggle_ledB, 2, 0);
   // vtimer_enable();
-  while (1)
+  while (1) {
     task_yield();
-    ;
+  }
   return 0;
 }
