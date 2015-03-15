@@ -30,22 +30,27 @@ int num_tasks = 0;
 TaskID cur_task = -1;
 
 task_t tasks[MAX_NUM_TASKS];
-uint8_t stacks[MAX_NUM_TASKS][MAX_STACK_SIZE];
+uint8_t stacks[MAX_NUM_TASKS][STACK_SIZE];
 
 static void end_of_task() {
   while (1);
 }
 
 static inline uint8_t* read_psp() {
-  uint8_t* result = NULL;
-  asm volatile ("MRS %0, psp\n" : "=r" (result));
-  return result;
+  uint8_t* psp = (uint8_t*)0;
+  asm volatile ("MRS %0, psp\n" : "=r" (psp));
+  return psp;
+}
+
+static inline void write_psp(uint8_t* psp) {
+  asm volatile ("MSR psp, %0\n" :: "r" (psp));
 }
 
 static inline void save_context() {
   // Get task sp and make room for 8 more regs
   uint8_t* psp = read_psp();
   psp -= 32; 
+
   // Save stack pointer
   tasks[cur_task].sp = psp;
 
@@ -57,15 +62,28 @@ static inline void save_context() {
     "MOV   r6, r10\n"
     "MOV   r7, r11\n"
     "STMIA %0!, {r4-r7}\n"
+    :
+    : "r" (psp)
   );
 }
 
 static inline void load_context() {
-  uint32_t scratch;
+  uint8_t* psp = tasks[cur_task].sp;
+
   asm volatile (
-    "MRS %0, psp\n"
-    "LDMFD %0!, {r4-r11}\n"
-    "MSR psp, %0\n" : "=r" (scratch)
+    "ADD %0, #16\n"
+    "LDMIA %0!, {r4-r7}\n"
+    "MOV r11, r7\n"
+    "MOV r10, r6\n"
+    "MOV r9, r5\n"
+    "MOV r8, r4\n"
+
+    "MSR psp, %0\n" 
+
+    "SUB %0, #32\n"
+    "LDMIA %0!, {r4-r7}\n"
+    :
+    : "r"(psp)
   );
 
 }
@@ -82,18 +100,18 @@ TaskID add_task(FuncPtr* fn, FuncArgs* args) {
   }
 
   TaskID id = num_tasks++;
-  tasks[id].sp = &stacks[id] + MAX_STACK_SIZE - 1;
+  tasks[id].sp = (uint8_t*)(&stacks[id] + STACK_SIZE - 1);
 
   // -1 in order to leave the top empty
   // (for a usual stack frame that would be the last entry from the before the interrupt)
-  frame = tasks[id].sp - sizeof(hw_stack_frame_t) - 1;
+  frame = (hw_stack_frame_t*)(tasks[id].sp - sizeof(hw_stack_frame_t) - 1);
   frame->xPSR = 0x01000000;
   frame->PC = (uint32_t)fn;
   frame->LR = (uint32_t)end_of_task;
   frame->R0 = (uint32_t)args;
 
   // Update sp for task
-  tasks[id].sp = task[id].sp - sizeof(hw_stack_frame_t) - sizeof(sw_stack_frame_t);
+  tasks[id].sp = tasks[id].sp - sizeof(hw_stack_frame_t) - sizeof(sw_stack_frame_t);
 
   return id;
 }

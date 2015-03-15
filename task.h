@@ -1,6 +1,7 @@
 #ifndef __MRTOS_TASK__
 #define __MRTOS_TASK__
 #define MAX_NUM_TASKS 10
+#define STACK_SIZE 0x1000
 typedef void (*FuncPtr)( void );
 typedef void*  FuncArgs;
 typedef int    TaskID;
