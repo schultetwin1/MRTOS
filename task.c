@@ -1,7 +1,7 @@
 #include "nvic.h"
 #include "task.h"
 
-typedef struct {
+typedef struct __attribute__((__packed__)) {
   uint32_t R0;
   uint32_t R1;
   uint32_t R2;
@@ -11,17 +11,6 @@ typedef struct {
   uint32_t PC;
   uint32_t xPSR;
 } hw_stack_frame_t;
-
-typedef struct {
-  uint32_t R4;
-  uint32_t R5;
-  uint32_t R6;
-  uint32_t R7;
-  uint32_t R8;
-  uint32_t R9;
-  uint32_t R10;
-  uint32_t R11;
-} sw_stack_frame_t;
 
 typedef struct {
   uint8_t* sp;
@@ -64,6 +53,7 @@ static inline void save_context() {
     "STMIA %0!, {r4-r7}\n"
     :
     : "r" (psp)
+    : "%r4", "%r5", "%r6", "%r7"
   );
 }
 
@@ -84,6 +74,7 @@ static inline void load_context() {
     "LDMIA %0!, {r4-r7}\n"
     :
     : "r"(psp)
+    : "%r4", "%r5", "%r6", "%r7", "%r8", "%r9", "%r10", "%r11"
   );
 }
 
@@ -103,18 +94,18 @@ TaskID add_task(FuncPtr fn, FuncArgs args) {
   }
 
   TaskID id = num_tasks++;
-  tasks[id].sp = (uint8_t*)(&stacks[id] + STACK_SIZE - 1);
+  tasks[id].sp = (uint8_t*)(((uint8_t*)&stacks[id]) + STACK_SIZE);
 
   // -1 in order to leave the top empty
   // (for a usual stack frame that would be the last entry from the before the interrupt)
-  frame = (hw_stack_frame_t*)(tasks[id].sp - sizeof(hw_stack_frame_t) - 1);
+  frame = (hw_stack_frame_t*)(tasks[id].sp - sizeof(hw_stack_frame_t) - 4);
   frame->xPSR = 0x01000000;
   frame->PC = (uint32_t)fn;
   frame->LR = (uint32_t)end_of_task;
   frame->R0 = (uint32_t)args;
 
   // Update sp for task
-  tasks[id].sp = tasks[id].sp - sizeof(hw_stack_frame_t) - sizeof(sw_stack_frame_t);
+  tasks[id].sp = (uint8_t*)frame - 32;
 
   return id;
 }
