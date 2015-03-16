@@ -3,6 +3,8 @@ LD=arm-none-eabi-ld
 OBJCOPY=arm-none-eabi-objcopy
 AS=arm-none-eabi-as
 
+VERSION = RELEASE
+
 SOURCES=vector.c gpio.c timer.c nvic.c blink.c vtimer.c utils.c rcc.c queue.c task.c
 ASM=port_task.s
 
@@ -11,8 +13,20 @@ ARCH_FLAGS = -mthumb -mcpu=cortex-m0plus
 
 
 BINARY = blink
+
+ifeq "$(VERSION)" "RELEASE"
+	BUILD_DIR = build/release
+else
+ifeq "$(VERSION)" "DEBUG"
+	BUILD_DIR = build/debug
+	CFLAGS += -O0 -g
+endif
+endif
+
 LDSCRIPT ?=  $(BINARY).ld
-OBJS = $(SOURCES:%.c=%.o) $(ASM:%.s=%.o)
+
+OBJS = $(SOURCES:%.c=$(BUILD_DIR)/%.o) $(ASM:%.s=$(BUILD_DIR)/%.o)
+
 
 ##################################
 # OpenOCD specific variables
@@ -38,38 +52,39 @@ LDFLAGS += -Map=$(BINARY).map
 ##################################
 ##################################
 
-.PRECIOUS: %.o
+.PRECIOUS: $(OBJS)
 
 all: elf
 
-debug: CFLAGS += -O0 -g
-debug: elf
 
-elf: $(BINARY).elf
-bin: $(BINARY).bin
-hex: $(BINARY).hex
+elf: $(BUILD_DIR)/$(BINARY).elf
+bin: $(BUILD_DIR)/$(BINARY).bin
+hex: $(BUILD_DIR)/$(BINARY).hex
 
-flash: $(BINARY).flash
+flash: $(BUILD_DIR)/$(BINARY).flash
 
-%.bin: %.elf
+$(BUILD_DIR)/%.bin: $(BUILD_DIR)/%.elf
 	$(OBJCOPY) -Obinary $^ $@
 
-%.hex: %.elf
+$(BUILD_DIR)/%.hex: $(BUILD_DIR)/%.elf
 	$(OBJCOPY) -Oihex $^ $@
 
-%.elf %.map: $(OBJS) $(LDSCRIPT)
+$(BUILD_DIR)/%.elf $(BUILD_DIR)/%.map: $(BUILD_DIR) $(OBJS) $(LDSCRIPT)
 	$(LD) $(LDFLAGS) $(OBJS) -o $@
 
-%.o: %.c
+$(BUILD_DIR)/%.o: %.c
 	$(CC) $(CFLAGS) $(ARCH_FLAGS) $(FP_FLAGS) -o $@ -c $^
 
-%.o: %.s
+$(BUILD_DIR)/%.o: %.s
 	$(AS) $(ARCH_FLAGS) $^ -o $@ 
 
-clean:
-	$(RM) *.o *.d *.elf *.bin *.hex *.map
+$(BUILD_DIR):
+	mkdir -p $@
 
-%.flash: %.hex
+clean:
+	$(RM) -r build
+
+$(BUILD_DIR)/%.flash: $(BUILD_DIR)/%.hex
 	$(OOCD) -f interface/$(OOCD_INTERFACE).cfg \
 					-f board/$(OOCD_BOARD).cfg \
 					-c "init" -c "reset init" \
