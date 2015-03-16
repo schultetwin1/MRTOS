@@ -17,9 +17,6 @@ pend_sv_handler:
   /* Make room for 8 more regs */
   SUBS r0, #32
 
-  /* Store sp in memory*/
-  bl store_psp
-
   /* Push r4-r11 onto that stack as well */
   STMIA r0!, {r4-r7}
   MOV   r4, r8
@@ -27,6 +24,10 @@ pend_sv_handler:
   MOV   r6, r10
   MOV   r7, r11
   STMIA r0!, {r4-r7}
+
+  /* Store sp in memory*/
+  SUBS r0, #32
+  bl store_psp
 
 
   /**
