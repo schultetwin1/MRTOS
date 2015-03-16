@@ -2,6 +2,7 @@
 #include "nvic.h"
 #include "task.h"
 #include "timer.h"
+#include "utils.h"
 #include "vector.h"
 #include "vtimer.h"
 
@@ -10,6 +11,7 @@ void toggle_ledA(void* args) {
   while (1) {
     gpio_write(GPIOA, 5, toggle);
     toggle ^= 1;
+    delay(100);
     task_yield();
   }
 }
@@ -19,6 +21,7 @@ void toggle_ledB(void* args) {
   while (1) {
     gpio_write(GPIOB, 4, toggle);
     toggle ^= 1;
+    delay(100);
     task_yield();
   }
 }
