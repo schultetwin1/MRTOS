@@ -8,7 +8,7 @@ typedef int    TaskID;
 
 TaskID add_task(FuncPtr fn, FuncArgs args);
 void task_yield();
-void pend_sv_handler();
+void __attribute__ ((interrupt("ISR"))) pend_sv_handler();
 
 // Does not return
 void   run_tasks();

@@ -4,14 +4,15 @@ OBJCOPY=arm-none-eabi-objcopy
 AS=arm-none-eabi-as
 
 SOURCES=vector.c gpio.c timer.c nvic.c blink.c vtimer.c utils.c rcc.c queue.c task.c
+ASM=port_task.s
 
 FP_FLAGS ?= -msoft-float
-ARCH_FLAGS = -mthumb -mcpu=cortex-m0plus $(FP_FLAGS)
+ARCH_FLAGS = -mthumb -mcpu=cortex-m0plus
 
 
 BINARY = blink
 LDSCRIPT ?=  $(BINARY).ld
-OBJS += $(SOURCES:%.c=%.o)
+OBJS = $(SOURCES:%.c=%.o) $(ASM:%.s=%.o)
 
 ##################################
 # OpenOCD specific variables
@@ -60,7 +61,10 @@ flash: $(BINARY).flash
 	$(LD) $(LDFLAGS) $(OBJS) -o $@
 
 %.o: %.c
-	$(CC) $(CFLAGS) $(ARCH_FLAGS) -o $@ -c $^
+	$(CC) $(CFLAGS) $(ARCH_FLAGS) $(FP_FLAGS) -o $@ -c $^
+
+%.o: %.s
+	$(AS) $(ARCH_FLAGS) $^ -o $@ 
 
 clean:
 	$(RM) *.o *.d *.elf *.bin *.hex *.map

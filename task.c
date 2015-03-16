@@ -25,65 +25,16 @@ static void end_of_task() {
   while (1);
 }
 
-static inline uint8_t* read_psp() {
-  uint8_t* psp = (uint8_t*)0;
-  asm volatile ("MRS %0, psp\n" : "=r" (psp));
-  return psp;
-}
-
-static inline void write_psp(uint8_t* psp) {
-  asm volatile ("MSR psp, %0\n" :: "r" (psp));
-}
-
-static inline void save_context() {
-  // Get task sp and make room for 8 more regs
-  uint8_t* psp = read_psp();
-  psp -= 32; 
-
-  // Save stack pointer
+void store_psp(uint8_t* psp) {
   tasks[cur_task].sp = psp;
-
-  // Save regs r4 - r11
-  asm volatile (
-    "STMIA %0!, {r4-r7}\n"
-    "MOV   r4, r8\n"
-    "MOV   r5, r9\n"
-    "MOV   r6, r10\n"
-    "MOV   r7, r11\n"
-    "STMIA %0!, {r4-r7}\n"
-    :
-    : "r" (psp)
-    : "%r4", "%r5", "%r6", "%r7"
-  );
 }
 
-static inline void load_context() {
-  uint8_t* psp = tasks[cur_task].sp;
-  psp += 16;
-
-  asm volatile (
-    "LDMIA %0!, {r4-r7}\n"
-    "MOV r11, r7\n"
-    "MOV r10, r6\n"
-    "MOV r9, r5\n"
-    "MOV r8, r4\n"
-
-    "MSR psp, %0\n"
-
-    "SUB %0, #32\n"
-    "LDMIA %0!, {r4-r7}\n"
-    :
-    : "r"(psp)
-    : "%r4", "%r5", "%r6", "%r7", "%r8", "%r9", "%r10", "%r11"
-  );
-}
-
-
-void switch_context() {
+uint8_t* switch_context() {
   cur_task++;
   if (cur_task == num_tasks) {
     cur_task = 0;
   }
+  return tasks[cur_task].sp;
 }
 
 TaskID add_task(FuncPtr fn, FuncArgs args) {
@@ -134,12 +85,4 @@ void run_tasks() {
     : "r"(psp)
   );
   
-}
-
-
-void pend_sv_handler() {
-  save_context();
-  switch_context();
-  load_context();
-  NVIC_ClearPendingIRQ(PEND_SV_IRQn);
 }
