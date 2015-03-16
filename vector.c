@@ -9,6 +9,8 @@ extern void pend_sv_handler(void);
 void blocking_handler(void);
 void null_handler(void);
 void hard_fault_handler(void);
+void nmi_handler(void);
+void sv_call_handler(void);
 void main(void);
 
 void  __attribute__ ((interrupt ("IRQ"))) reset_handler(void);
@@ -17,9 +19,9 @@ __attribute__ ((section(".vectors")))
 vector_table_t vector_table = {
   .initial_sp_value = &_stack,
   .reset = reset_handler,
-  .nmi = null_handler,
+  .nmi = nmi_handler,
   .hard_fault = hard_fault_handler,
-  .sv_call = null_handler,
+  .sv_call = sv_call_handler,
   .pend_sv = pend_sv_handler,
   .systick = null_handler,
   .IRQ = {
@@ -81,6 +83,14 @@ void  __attribute__ ((interrupt ("IRQ"))) null_handler(void) {
 }
 
 void  __attribute__ ((interrupt ("IRQ"))) hard_fault_handler(void) {
+  while (1);
+}
+
+void __attribute__ ((interrupt ("IRQ"))) nmi_handler(void) {
+  while (1);
+}
+
+void __attribute__ ((interrupt ("IRQ"))) sv_call_handler(void) {
   while (1);
 }
 
