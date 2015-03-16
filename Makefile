@@ -24,7 +24,7 @@ OOCD_BOARD ?= stm32l0discovery
 # C flags
 CFLAGS += -O3
 CFLAGS += -Wall -Werror
-CFLAGS += -fno-common -ffunction-sections -fdata-sections
+CFLAGS += -fno-common -ffunction-sections -fdata-sections -fomit-frame-pointer
 
 ##################################
 # LD flags
