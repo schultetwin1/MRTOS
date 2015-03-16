@@ -1,6 +1,8 @@
 #include "nvic.h"
 #include "task.h"
 
+extern void start_scheduler();
+
 typedef struct __attribute__((__packed__)) {
   uint32_t R0;
   uint32_t R1;
@@ -66,23 +68,10 @@ void task_yield() {
 }
 
 void run_tasks() {
-  uint8_t* psp;
   // No tasks to run
   if (num_tasks <= 0) return;
-
   cur_task = 0;
-  psp = tasks[cur_task].sp;
-  psp += 32;
 
-  asm volatile (
-    "MSR psp, %0\n"
-    "MOV r0, #2\n"
-    "MSR control, r0\n"
-    "POP {r0-r5}\n"
-    "MOV lr, r5\n"
-    "POP {pc}\n"
-    :
-    : "r"(psp)
-  );
+  start_scheduler();
   
 }

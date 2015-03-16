@@ -54,3 +54,16 @@ pend_sv_handler:
   LDMIA r0!, {r4-r7}
 
   pop {pc}
+
+.thumb_func
+.global start_scheduler
+start_scheduler:
+  bl switch_context
+  ADDS r0, #32
+
+  MSR psp, r0
+  MOVS r0, #2
+  MSR control, r0
+  POP {r0-r5}
+  MOV lr, r5
+  POP {pc}
