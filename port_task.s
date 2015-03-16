@@ -11,14 +11,16 @@ pend_sv_handler:
   /**
    Storing context
    */
-  /* Load sp */
+  /* Load sp from status reg */
   MRS r0, PSP
 
+  /* Make room for 8 more regs */
   SUBS r0, #32
 
-  /* Store sp */
+  /* Store sp in memory*/
   bl store_psp
 
+  /* Push r4-r11 onto that stack as well */
   STMIA r0!, {r4-r7}
   MOV   r4, r8
   MOV   r5, r9
@@ -36,6 +38,7 @@ pend_sv_handler:
   /**
    Loading context
    */
+  /* Load r8 - r11 */
   ADDS r0, #16
   LDMIA r0!, {r4-r7}
   MOV r11, r7
@@ -43,8 +46,10 @@ pend_sv_handler:
   MOV r9, r5
   MOV r8, r4
 
+  /* set new sp */
   MSR psp, r0
 
+  /* load r4 - r7 */
   SUBS r0, #32
   LDMIA r0!, {r4-r7}
 
