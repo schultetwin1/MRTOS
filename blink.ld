@@ -37,7 +37,9 @@ SECTIONS
     _ebss = .;
   } >ram
 
+  . = ALIGN(4);
   end = .;
 }
 
 PROVIDE(_stack = ORIGIN(ram) + LENGTH(ram));
+PROVIDE(_heap = end);
