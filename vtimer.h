@@ -8,7 +8,7 @@ typedef void (*timer_fn_t)(void);
 typedef struct vtimer vtimer_t;
 
 struct vtimer {
-  node_t queue;
+  node_t node;
 
   timer_fn_t timer_cb;
   uint32_t ticks;
