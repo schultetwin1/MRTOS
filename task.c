@@ -72,6 +72,7 @@ void run_tasks() {
   if (num_tasks <= 0) return;
   cur_task = 0;
 
+  // Enable pendsv int
+  NVIC_SetPriority(PEND_SV_IRQn, 0xFF);
   start_scheduler();
-  
 }

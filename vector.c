@@ -13,7 +13,7 @@ void nmi_handler(void);
 void sv_call_handler(void);
 void main(void);
 
-void  __attribute__ ((interrupt ("IRQ"))) reset_handler(void);
+void  __attribute__ ((interrupt ("IRQ"), naked)) reset_handler(void);
 
 __attribute__ ((section(".vectors")))
 vector_table_t vector_table = {
@@ -48,7 +48,7 @@ vector_table_t vector_table = {
   }
 };
 
-void  __attribute__ ((interrupt ("IRQ"))) reset_handler(void)
+void reset_handler(void)
 {
   volatile unsigned *src, *dest;
 
@@ -65,9 +65,6 @@ void  __attribute__ ((interrupt ("IRQ"))) reset_handler(void)
   // Switch to 16MHz clk
   rcc_hsi16_enable();
   rcc_switch_sys_clk(SYSCLK_HSI16);
-
-  // Enable pendsv int
-  NVIC_SetPriority(PEND_SV_IRQn, 0xFF);
 
   main();
 
