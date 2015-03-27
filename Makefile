@@ -46,7 +46,7 @@ CFLAGS += -fno-common -ffunction-sections -fdata-sections -fomit-frame-pointer
 
 LDFLAGS += --static -nostartfiles
 LDFLAGS += -T$(LDSCRIPT)
-LDFLAGS += -Map=$(BINARY).map
+LDFLAGS += -Map=$(BUILD_DIR)/$(BINARY).map
 
 ##################################
 ##################################
