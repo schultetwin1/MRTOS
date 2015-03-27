@@ -2,8 +2,4 @@
 *.swp
 
 # Build Files
-*.bin
-*.hex
-*.elf
-*.o
-*.map
+build/
