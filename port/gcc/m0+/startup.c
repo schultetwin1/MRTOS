@@ -108,7 +108,3 @@ void __attribute__ ((interrupt ("IRQ"))) nmi_handler(void) {
 void __attribute__ ((interrupt ("IRQ"))) sv_call_handler(void) {
   while (1);
 }
-
-void set_irq_handler(IRQn_t IRQn, vector_table_entry_t handler) {
-  vector_table.IRQ[IRQn] = handler;
-}

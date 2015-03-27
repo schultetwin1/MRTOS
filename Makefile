@@ -17,7 +17,8 @@ endif
 
 PORT_DIR ?= port/gcc/m0+
 
-SRCS := $(wildcard *.c) $(wildcard drivers/*.c) $(PORT_DIR)/port_task.s
+SRC_DIRS := . drivers $(PORT_DIR)
+SRCS := $(wildcard *.c) $(wildcard drivers/*.c) $(wildcard $(PORT_DIR)/*.c) $(wildcard $(PORT_DIR)/*.s)
 HDRS := $(wildcard include/*.h drivers/*.h)
 OBJS := $(addprefix $(BUILD_DIR)/, $(addsuffix .o, $(basename $(notdir $(SRCS)))))
 
@@ -75,6 +76,9 @@ $(BUILD_DIR)/%.o: %.c Makefile
 	$(CC) $(CFLAGS) $(ARCH_FLAGS) $(FP_FLAGS) -o $@ -c $<
 
 $(BUILD_DIR)/%.o: drivers/%.c Makefile
+	$(CC) $(CFLAGS) $(ARCH_FLAGS) $(FP_FLAGS) -o $@ -c $<
+
+$(BUILD_DIR)/%.o: $(PORT_DIR)/%.c Makefile
 	$(CC) $(CFLAGS) $(ARCH_FLAGS) $(FP_FLAGS) -o $@ -c $<
 
 $(BUILD_DIR)/%.o: $(PORT_DIR)/%.s Makefile
