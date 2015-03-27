@@ -19,6 +19,6 @@ const node_t* queue_top(const queue_t* queue);
 unsigned      queue_size(const queue_t* queue);
 
 void     queue_add(queue_t* queue, node_t* item, node_cmp_fn_t cmp);
-void     queue_remove_item(queue_t* queue, node_t* item);
+void     queue_remove(queue_t* queue, node_t* item);
 
 #endif
