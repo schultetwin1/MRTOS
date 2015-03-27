@@ -74,6 +74,9 @@ $(BUILD_DIR)/%.elf $(BUILD_DIR)/%.map: $(BUILD_DIR) $(OBJS) $(LDSCRIPT)
 $(BUILD_DIR)/%.o: %.c Makefile
 	$(CC) $(CFLAGS) $(ARCH_FLAGS) $(FP_FLAGS) -o $@ -c $<
 
+$(BUILD_DIR)/%.o: drivers/%.c Makefile
+	$(CC) $(CFLAGS) $(ARCH_FLAGS) $(FP_FLAGS) -o $@ -c $<
+
 $(BUILD_DIR)/%.o: $(PORT_DIR)/%.s Makefile
 	$(CC) $(CFLAGS) $(ARCH_FLAGS) $(FP_FLAGS) -o $@ -c $<
 
