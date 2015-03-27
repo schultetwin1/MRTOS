@@ -1,6 +1,11 @@
 #include "nvic.h"
 #include "timer.h"
 
+#define MAX_FREQ  2097000 // 2.097 MHz
+#define SCALAR    0x1     // 2.097 MHz
+
+static const uint32_t CLK_FREQ = MAX_FREQ / SCALAR;
+
 typedef volatile struct {
   // 0x00
   uint16_t TIMx_CR1;

@@ -5,12 +5,7 @@
 
 #include "nvic.h"
 
-#define MAX_FREQ  2097000 // 2.097 MHz
-#define SCALAR    0x1     // 2.097 MHz
-
-static const uint32_t CLK_FREQ = MAX_FREQ / SCALAR;
-
-// Currently just using timer21
+// Currently assumes 16-bit timer
 
 void timer_init();
 
