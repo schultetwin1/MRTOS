@@ -15,7 +15,7 @@ ifeq "$(VERSION)" "DEBUG"
 endif
 endif
 
-PORT_DIR = port/gcc/m0+
+PORT_DIR ?= port/gcc/m0+
 
 SRCS := $(wildcard *.c) $(PORT_DIR)/port_task.s
 HDRS := $(wildcard include/*.h)
