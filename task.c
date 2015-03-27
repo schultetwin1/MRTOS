@@ -2,6 +2,7 @@
 #include "task.h"
 
 extern void start_scheduler();
+extern void port_task_yield();
 
 typedef struct __attribute__((__packed__)) {
   uint32_t R0;
@@ -46,6 +47,7 @@ TaskID add_task(FuncPtr fn, FuncArgs args) {
 
   // -1 in order to leave the top empty
   // (for a usual stack frame that would be the last entry from the before the interrupt)
+  // @TODO: Not portable
   frame = (hw_stack_frame_t*)(tasks[id].sp - sizeof(hw_stack_frame_t) - 4);
   frame->xPSR = 0x01000000;
   frame->PC = (uint32_t)fn;
@@ -59,7 +61,7 @@ TaskID add_task(FuncPtr fn, FuncArgs args) {
 }
 
 void task_yield() {
-  NVIC_SetPendingIRQ(PEND_SV_IRQn);
+  port_task_yield();
 }
 
 void run_tasks() {
