@@ -58,6 +58,6 @@ void queue_add(queue_t* queue, node_t* item, node_cmp_fn_t cmp) {
   return;
 }
 
-void queue_remove_item(queue_t* queue, node_t* item) {
+void queue_remove(queue_t* queue, node_t* item) {
 
 }
