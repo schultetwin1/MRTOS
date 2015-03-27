@@ -7,4 +7,9 @@
 #define GPIOB 1
 #define GPIOA 0
 
+typedef enum {
+  GPIO_INPUT_MODE  = 0,
+  GPIO_OUTPUT_MODE = 1
+} gpio_mode_t;
+
 #endif
