@@ -5,14 +5,14 @@ AS=arm-none-eabi-as
 
 VERSION = RELEASE
 
-SOURCES=vector.c gpio.c timer.c nvic.c blink.c vtimer.c utils.c rcc.c queue.c task.c
+SOURCES=vector.c gpio.c timer.c nvic.c main.c vtimer.c utils.c rcc.c queue.c task.c
 ASM=port_task.s
 
 FP_FLAGS ?= -msoft-float
 ARCH_FLAGS = -mthumb -mcpu=cortex-m0plus
 
 
-BINARY = blink
+BINARY = main
 
 ifeq "$(VERSION)" "RELEASE"
 	BUILD_DIR = build/release
