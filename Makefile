@@ -17,8 +17,8 @@ endif
 
 PORT_DIR ?= port/gcc/m0+
 
-SRCS := $(wildcard *.c) $(PORT_DIR)/port_task.s
-HDRS := $(wildcard include/*.h)
+SRCS := $(wildcard *.c) $(wildcard drivers/*.c) $(PORT_DIR)/port_task.s
+HDRS := $(wildcard include/*.h drivers/*.h)
 OBJS := $(addprefix $(BUILD_DIR)/, $(addsuffix .o, $(basename $(notdir $(SRCS)))))
 
 FP_FLAGS ?= -msoft-float
@@ -38,7 +38,7 @@ OOCD_BOARD ?= stm32l0discovery
 
 ##################################
 # C flags
-CFLAGS += -Wall -Werror -Iinclude
+CFLAGS += -Wall -Werror -Iinclude -Idrivers
 CFLAGS += -fno-common -ffunction-sections -fdata-sections -fomit-frame-pointer
 
 ##################################
