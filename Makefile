@@ -3,19 +3,11 @@ LD=arm-none-eabi-ld
 OBJCOPY=arm-none-eabi-objcopy
 AS=arm-none-eabi-as
 
-VERSION = RELEASE
-
-SOURCES=vector.c gpio.c timer.c nvic.c main.c vtimer.c utils.c rcc.c queue.c task.c
-ASM=port_task.s
-
-FP_FLAGS ?= -msoft-float
-ARCH_FLAGS = -mthumb -mcpu=cortex-m0plus
-
-
-BINARY = main
-
+BUILD_DIR = build/release
+VERSION ?= RELEASE
 ifeq "$(VERSION)" "RELEASE"
 	BUILD_DIR = build/release
+	CFLAGS += -O3
 else
 ifeq "$(VERSION)" "DEBUG"
 	BUILD_DIR = build/debug
@@ -23,10 +15,19 @@ ifeq "$(VERSION)" "DEBUG"
 endif
 endif
 
-LDSCRIPT ?=  $(BINARY).ld
+PORT_DIR = port/gcc/m0+
 
-OBJS = $(SOURCES:%.c=$(BUILD_DIR)/%.o) $(ASM:%.s=$(BUILD_DIR)/%.o)
+SRCS := $(wildcard *.c) $(PORT_DIR)/port_task.s
+HDRS := $(wildcard include/*.h)
+OBJS := $(addprefix $(BUILD_DIR)/, $(addsuffix .o, $(basename $(notdir $(SRCS)))))
 
+FP_FLAGS ?= -msoft-float
+ARCH_FLAGS = -mthumb -mcpu=cortex-m0plus
+
+
+BINARY = main
+
+LDSCRIPT ?=  $(PORT_DIR)/$(BINARY).ld
 
 ##################################
 # OpenOCD specific variables
@@ -37,8 +38,7 @@ OOCD_BOARD ?= stm32l0discovery
 
 ##################################
 # C flags
-CFLAGS += -O3
-CFLAGS += -Wall -Werror
+CFLAGS += -Wall -Werror -Iinclude
 CFLAGS += -fno-common -ffunction-sections -fdata-sections -fomit-frame-pointer
 
 ##################################
@@ -56,7 +56,6 @@ LDFLAGS += -Map=$(BUILD_DIR)/$(BINARY).map
 
 all: elf
 
-
 elf: $(BUILD_DIR)/$(BINARY).elf
 bin: $(BUILD_DIR)/$(BINARY).bin
 hex: $(BUILD_DIR)/$(BINARY).hex
@@ -72,11 +71,11 @@ $(BUILD_DIR)/%.hex: $(BUILD_DIR)/%.elf
 $(BUILD_DIR)/%.elf $(BUILD_DIR)/%.map: $(BUILD_DIR) $(OBJS) $(LDSCRIPT)
 	$(LD) $(LDFLAGS) $(OBJS) -o $@
 
-$(BUILD_DIR)/%.o: %.c
-	$(CC) $(CFLAGS) $(ARCH_FLAGS) $(FP_FLAGS) -o $@ -c $^
+$(BUILD_DIR)/%.o: %.c Makefile
+	$(CC) $(CFLAGS) $(ARCH_FLAGS) $(FP_FLAGS) -o $@ -c $<
 
-$(BUILD_DIR)/%.o: %.s
-	$(AS) $(ARCH_FLAGS) $^ -o $@ 
+$(BUILD_DIR)/%.o: $(PORT_DIR)/%.s Makefile
+	$(CC) $(CFLAGS) $(ARCH_FLAGS) $(FP_FLAGS) -o $@ -c $<
 
 $(BUILD_DIR):
 	mkdir -p $@

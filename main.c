@@ -3,7 +3,6 @@
 #include "task.h"
 #include "timer.h"
 #include "utils.h"
-#include "vector.h"
 #include "vtimer.h"
 
 void toggle_ledA(void* args) {

@@ -1,10 +1,28 @@
 #include "rcc.h"
-#include "vector.h"
+#include "nvic.h"
 
 extern unsigned _stack;
 extern unsigned _data_loadaddr, _data, _edata, _ebss;
 extern void timer_handler(void);
 extern void pend_sv_handler(void);
+
+typedef void (*vector_table_entry_t)(void);
+
+#define NUM_IRQS 32
+
+typedef struct {
+  unsigned int *initial_sp_value;
+  vector_table_entry_t reset;
+  vector_table_entry_t nmi;
+  vector_table_entry_t hard_fault;
+  vector_table_entry_t reserved1[7];
+  vector_table_entry_t sv_call;
+  vector_table_entry_t reserved2[2];
+  vector_table_entry_t pend_sv;
+  vector_table_entry_t systick;
+  vector_table_entry_t reserved3;
+  vector_table_entry_t IRQ[NUM_IRQS];
+} vector_table_t;
 
 void blocking_handler(void);
 void null_handler(void);
