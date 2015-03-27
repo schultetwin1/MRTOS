@@ -1,7 +1,7 @@
-#include "gpio.h"
-#include "nvic.h"
+#include "drivers/gpio.h"
+#include "drivers/nvic.h"
 #include "task.h"
-#include "timer.h"
+#include "drivers/timer.h"
 #include "utils.h"
 #include "vtimer.h"
 

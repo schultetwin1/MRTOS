@@ -1,10 +1,11 @@
-#ifndef __STM32l0_NVIC__
-#define __STM32l0_NVIC__
-#include <inttypes.h>
-typedef int8_t IRQn_t;
+#ifndef __MRTOS_NVIC__
+#define __MRTOS_NVIC__
 
-#define PEND_SV_IRQn -2
-#define SYSTICK_IRQn -1
+#include <inttypes.h>
+
+#include "drivers/port_nvic.h"
+
+typedef int8_t IRQn_t;
 
 void NVIC_EnableIRQ(IRQn_t IRQn);
 void NVIC_DisableIRQ(IRQn_t IRQn);

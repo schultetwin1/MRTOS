@@ -1,5 +1,5 @@
-#include "gpio.h"
-#include "rcc.h"
+#include "drivers/gpio.h"
+#include "drivers/port_rcc.h"
 
 typedef volatile struct {
   // 0x00

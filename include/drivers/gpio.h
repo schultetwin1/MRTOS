@@ -1,20 +1,13 @@
-#ifndef __STM32L0_GPIO__
-#define __STM32L0_GPIO__
+#ifndef __MRTOS_GPIO__
+#define __MRTOS_GPIO__
 
 #include <inttypes.h>
 
-#define GPIOH 7
-#define GPIOD 3
-#define GPIOC 2
-#define GPIOB 1
-#define GPIOA 0
-
+#include "drivers/port_gpio.h"
 
 typedef enum {
   GPIO_INPUT_MODE  = 0,
-  GPIO_OUTPUT_MODE = 1,
-  GPIO_ALT_MODE    = 2,
-  GPIO_ANALOG_MODE = 3
+  GPIO_OUTPUT_MODE = 1
 } gpio_mode_t;
 
 void gpio_init(uint8_t port);

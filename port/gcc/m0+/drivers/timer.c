@@ -1,10 +1,8 @@
-#include "nvic.h"
-#include "timer.h"
+#include "drivers/nvic.h"
+#include "drivers/timer.h"
 
 #define MAX_FREQ  2097000 // 2.097 MHz
 #define SCALAR    0x1     // 2.097 MHz
-
-#define TIMER_IRQn   20
 
 static const uint32_t CLK_FREQ = MAX_FREQ / SCALAR;
 

@@ -1,4 +1,4 @@
-#include "nvic.h"
+#include "drivers/nvic.h"
 
 typedef struct {
   uint32_t _reserved3  : 12;

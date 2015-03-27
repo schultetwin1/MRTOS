@@ -1,5 +1,5 @@
 #include "vtimer.h"
-#include "gpio.h"
+#include "drivers/gpio.h"
 
 static queue_t* timer_queue;
 static unsigned int tick = 0;

@@ -1,6 +1,6 @@
 #ifndef __MRTOS_VTIMER__
 #define __MRTOS_VTIMER__
-#include "timer.h"
+#include "drivers/timer.h"
 #include "queue.h"
 
 typedef void (*timer_fn_t)(void);

@@ -17,9 +17,10 @@ endif
 
 PORT_DIR ?= port/gcc/m0+
 
-SRC_DIRS := . drivers $(PORT_DIR)
-SRCS := $(wildcard *.c) $(wildcard drivers/*.c) $(wildcard $(PORT_DIR)/*.c) $(wildcard $(PORT_DIR)/*.s)
-HDRS := $(wildcard include/*.h drivers/*.h)
+SRC_DIRS := . drivers $(PORT_DIR) $(PORT_DIR)/drivers
+HDR_DIRS := include $(PORT_DIR)/include
+SRCS := $(wildcard *.c) $(wildcard drivers/*.c) $(wildcard $(PORT_DIR)/*.c) $(wildcard $(PORT_DIR)/drivers/*.c) $(wildcard $(PORT_DIR)/*.s)
+HDRS := $(wildcard include/*.h $(PORT_DIR)/*.h)
 OBJS := $(addprefix $(BUILD_DIR)/, $(addsuffix .o, $(basename $(notdir $(SRCS)))))
 
 FP_FLAGS ?= -msoft-float
@@ -39,7 +40,7 @@ OOCD_BOARD ?= stm32l0discovery
 
 ##################################
 # C flags
-CFLAGS += -Wall -Werror -Iinclude -Idrivers
+CFLAGS += -Wall -Werror -Iinclude -I$(PORT_DIR)/include
 CFLAGS += -fno-common -ffunction-sections -fdata-sections -fomit-frame-pointer
 
 ##################################
@@ -79,6 +80,9 @@ $(BUILD_DIR)/%.o: drivers/%.c Makefile
 	$(CC) $(CFLAGS) $(ARCH_FLAGS) $(FP_FLAGS) -o $@ -c $<
 
 $(BUILD_DIR)/%.o: $(PORT_DIR)/%.c Makefile
+	$(CC) $(CFLAGS) $(ARCH_FLAGS) $(FP_FLAGS) -o $@ -c $<
+
+$(BUILD_DIR)/%.o: $(PORT_DIR)/drivers/%.c Makefile
 	$(CC) $(CFLAGS) $(ARCH_FLAGS) $(FP_FLAGS) -o $@ -c $<
 
 $(BUILD_DIR)/%.o: $(PORT_DIR)/%.s Makefile

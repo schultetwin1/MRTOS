@@ -1,5 +1,5 @@
-#include "rcc.h"
-#include "nvic.h"
+#include "drivers/port_rcc.h"
+#include "drivers/nvic.h"
 
 extern unsigned _stack;
 extern unsigned _data_loadaddr, _data, _edata, _ebss;

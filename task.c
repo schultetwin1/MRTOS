@@ -1,4 +1,4 @@
-#include "nvic.h"
+#include "drivers/nvic.h"
 #include "task.h"
 
 extern void start_scheduler();
