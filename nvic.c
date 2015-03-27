@@ -39,6 +39,10 @@ void NVIC_SetPendingIRQ(IRQn_t IRQn) {
   } 
 
   switch (IRQn) {
+    case SYSTICK_IRQn:
+      ICSR->PENDSTSET = 1;
+      break;
+
     case PEND_SV_IRQn:
       ICSR->PENDSVSET = 1;
       break;
@@ -54,6 +58,10 @@ void NVIC_ClearPendingIRQ(IRQn_t IRQn) {
   }
 
   switch (IRQn) {
+    case SYSTICK_IRQn:
+      ICSR->PENDSTCLR = 1;
+      break;
+
     case PEND_SV_IRQn:
       ICSR->PENDSVCLR = 1;
       break;
@@ -69,6 +77,9 @@ uint32_t NVIC_GetPendingIRQ(IRQn_t IRQn) {
   }
 
   switch (IRQn) {
+    case SYSTICK_IRQn:
+      return ICSR->PENDSTSET;
+
     case PEND_SV_IRQn:
       return ICSR->PENDSVSET;
     // @TODO: add rest of negative IRQs
@@ -96,6 +107,10 @@ void NVIC_SetPriority(IRQn_t IRQn, uint8_t priority) {
   }
 
   switch (IRQn) {
+    case SYSTICK_IRQn:
+      SHPR3->PRI_15 = priority;
+      break;
+
     case PEND_SV_IRQn:
       SHPR3->PRI_14 = priority;
       break;
@@ -120,6 +135,9 @@ uint32_t NVIC_GetPriority(IRQn_t IRQn) {
   }
 
   switch (IRQn) {
+    case SYSTICK_IRQn:
+      return SHPR3->PRI_15;
+
     case PEND_SV_IRQn:
       return SHPR3->PRI_14;
     // @TODO: add rest of negative IRQs

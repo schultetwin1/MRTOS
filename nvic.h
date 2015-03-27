@@ -4,6 +4,7 @@
 typedef int8_t IRQn_t;
 
 #define PEND_SV_IRQn -2
+#define SYSTICK_IRQn -1
 #define TIMER_IRQn   20
 
 void NVIC_EnableIRQ(IRQn_t IRQn);
