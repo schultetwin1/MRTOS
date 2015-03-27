@@ -27,16 +27,11 @@ static void end_of_task() {
   while (1);
 }
 
-void store_psp(uint8_t* psp) {
-  tasks[cur_task].sp = psp;
-}
-
-uint8_t* switch_context() {
+void switch_context() {
   cur_task++;
   if (cur_task == num_tasks) {
     cur_task = 0;
   }
-  return tasks[cur_task].sp;
 }
 
 TaskID add_task(FuncPtr fn, FuncArgs args) {
