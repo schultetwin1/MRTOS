@@ -17,10 +17,10 @@ endif
 
 PORT_DIR ?= port/gcc/m0+
 
-SRC_DIRS := . drivers $(PORT_DIR) $(PORT_DIR)/drivers
+SRC_DIRS := src $(PORT_DIR) $(PORT_DIR)/drivers
 HDR_DIRS := include $(PORT_DIR)/include
-SRCS := $(wildcard *.c) $(wildcard drivers/*.c) $(wildcard $(PORT_DIR)/*.c) $(wildcard $(PORT_DIR)/drivers/*.c) $(wildcard $(PORT_DIR)/*.s)
-HDRS := $(wildcard include/*.h $(PORT_DIR)/*.h)
+SRCS := $(foreach dir, $(SRC_DIRS), $(wildcard $(dir)/*.c)) $(foreach dir, $(SRC_DIRS), $(wildcard $(dir)/*.s))
+HDRS := $(foreach dir, $(HDRS_DIRS), $(wildcard $(dir)/*.h))
 OBJS := $(addprefix $(BUILD_DIR)/, $(addsuffix .o, $(basename $(notdir $(SRCS)))))
 
 FP_FLAGS ?= -msoft-float
@@ -73,10 +73,7 @@ $(BUILD_DIR)/%.hex: $(BUILD_DIR)/%.elf
 $(BUILD_DIR)/%.elf $(BUILD_DIR)/%.map: $(BUILD_DIR) $(OBJS) $(LDSCRIPT)
 	$(LD) $(LDFLAGS) $(OBJS) -o $@
 
-$(BUILD_DIR)/%.o: %.c Makefile
-	$(CC) $(CFLAGS) $(ARCH_FLAGS) $(FP_FLAGS) -o $@ -c $<
-
-$(BUILD_DIR)/%.o: drivers/%.c Makefile
+$(BUILD_DIR)/%.o: src/%.c Makefile
 	$(CC) $(CFLAGS) $(ARCH_FLAGS) $(FP_FLAGS) -o $@ -c $<
 
 $(BUILD_DIR)/%.o: $(PORT_DIR)/%.c Makefile
