@@ -32,15 +32,6 @@ int main() {
   gpio_set_mode(GPIOA, 5, GPIO_OUTPUT_MODE);
   gpio_set_mode(GPIOB, 4, GPIO_OUTPUT_MODE);
 
-
-  //vtimer_t toggleA;
-  //vtimer_t toggleB;
-  //vtimer_init();
-  //vtimer_add_timer(&toggleA, toggle_ledA, 1, 0);
-  //vtimer_add_timer(&toggleB, toggle_ledB, 2, 0);
-  // vtimer_enable();
-
-
   add_task(toggle_ledA, 0);
   add_task(toggle_ledB, 0);
 
