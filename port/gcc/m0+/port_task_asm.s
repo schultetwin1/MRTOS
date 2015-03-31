@@ -3,7 +3,8 @@
 
 .extern switch_context
 .extern store_psp
-.global tasks
+.extern tasks
+.extern cur_task
 
 .thumb_func
 .global pend_sv_handler
@@ -29,7 +30,6 @@ pend_sv_handler:
   /* Store sp in memory*/
   SUBS r0, #32
   ldr r1, =tasks
-  ldr r1, [r1]      // r1 = tasks
   ldr r2, =cur_task
   ldr r2, [r2]      // r2 = cur_task
   lsls r2, r2, #2   // r2 = cur_task * sizeof(task)
@@ -42,7 +42,6 @@ pend_sv_handler:
 
   /* Load new sp */
   ldr r1, =tasks
-  ldr r1, [r1]      // r1 = tasks
   ldr r2, =cur_task
   ldr r2, [r2]      // r2 = cur_task
   lsls r2, r2, #2   // r2 = cur_task * sizeof(task)
@@ -72,6 +71,14 @@ pend_sv_handler:
 .global start_scheduler
 start_scheduler:
   bl switch_context
+
+  /* Load new sp */
+  ldr r1, =tasks
+  ldr r2, =cur_task
+  ldr r2, [r2]      // r2 = cur_task
+  lsls r2, r2, #2   // r2 = cur_task * sizeof(task)
+  ldr  r0, [r1, r2] //r0 (sp) stored to tasks + offset
+
   ADDS r0, #32
 
   MSR psp, r0
