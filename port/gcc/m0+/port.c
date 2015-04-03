@@ -6,12 +6,11 @@
 #include "drivers/nvic.h"
 
 void pend_sv_handler() __attribute__((naked, interrupt));
-void start_scheduler() __attribute__((naked));
 extern void switch_context();
 
 static uint32_t PRIMASK;
 
-inline void critical_start() {
+inline void port_critical_start() {
   asm volatile(
     "mrs r0, PRIMASK\n"
     "mov %[MASK], r0\n"
@@ -22,7 +21,7 @@ inline void critical_start() {
   );
 }
 
-inline void critical_end() {
+inline void port_critical_end() {
   asm volatile(
     "mov r0, %[MASK]\n"
     "msr primask, r0\n"
@@ -62,11 +61,11 @@ void pend_sv_handler() {
     : "r4", "r5", "r6", "r7"
   );
 
-  critical_start();
+  port_critical_start();
   tasks[cur_task_id].sp = psp;
   switch_context();
   psp = tasks[cur_task_id].sp;
-  critical_end();
+  port_critical_end();
 
   asm volatile (
     /**
@@ -94,10 +93,13 @@ void pend_sv_handler() {
   );
 }
 
-void start_scheduler() {
+void port_start_scheduler() {
   uint8_t* psp;
   uint32_t ctrl;
   switch_context();
+
+  // Enable pendsv int
+  NVIC_SetPriority(PEND_SV_IRQn, 0xFF);
 
   psp = tasks[cur_task_id].sp;
 

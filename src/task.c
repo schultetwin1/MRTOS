@@ -2,18 +2,6 @@
 #include "task.h"
 
 extern void start_scheduler();
-extern void port_task_yield();
-
-typedef struct __attribute__((__packed__)) {
-  uint32_t R0;
-  uint32_t R1;
-  uint32_t R2;
-  uint32_t R3;
-  uint32_t R12;
-  uint32_t LR;
-  uint32_t PC;
-  uint32_t xPSR;
-} hw_stack_frame_t;
 
 int num_tasks = 0;
 TaskID cur_task_id = -1;
@@ -55,5 +43,5 @@ void run_tasks() {
 
   // Enable pendsv int
   NVIC_SetPriority(PEND_SV_IRQn, 0xFF);
-  start_scheduler();
+  port_start_scheduler();
 }
