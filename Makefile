@@ -19,7 +19,7 @@ PORT_DIR ?= port/gcc/m0+
 
 SRC_DIRS := src $(PORT_DIR) $(PORT_DIR)/drivers
 HDR_DIRS := include $(PORT_DIR)/include
-SRCS := $(foreach dir, $(SRC_DIRS), $(wildcard $(dir)/*.c)) $(foreach dir, $(SRC_DIRS), $(wildcard $(dir)/*.s))
+SRCS := $(foreach dir, $(SRC_DIRS), $(wildcard $(dir)/*.c))
 HDRS := $(foreach dir, $(HDRS_DIRS), $(wildcard $(dir)/*.h))
 OBJS := $(addprefix $(BUILD_DIR)/, $(addsuffix .o, $(basename $(notdir $(SRCS)))))
 
@@ -80,9 +80,6 @@ $(BUILD_DIR)/%.o: $(PORT_DIR)/%.c Makefile
 	$(CC) $(CFLAGS) $(ARCH_FLAGS) $(FP_FLAGS) -o $@ -c $<
 
 $(BUILD_DIR)/%.o: $(PORT_DIR)/drivers/%.c Makefile
-	$(CC) $(CFLAGS) $(ARCH_FLAGS) $(FP_FLAGS) -o $@ -c $<
-
-$(BUILD_DIR)/%.o: $(PORT_DIR)/%.s Makefile
 	$(CC) $(CFLAGS) $(ARCH_FLAGS) $(FP_FLAGS) -o $@ -c $<
 
 $(BUILD_DIR):

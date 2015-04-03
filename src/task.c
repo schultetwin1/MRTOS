@@ -15,11 +15,8 @@ typedef struct __attribute__((__packed__)) {
   uint32_t xPSR;
 } hw_stack_frame_t;
 
-typedef struct {
-  uint8_t* sp;
-} task_t;
 int num_tasks = 0;
-TaskID cur_task = -1;
+TaskID cur_task_id = -1;
 
 task_t tasks[MAX_NUM_TASKS];
 uint8_t stacks[MAX_NUM_TASKS][STACK_SIZE];
@@ -29,9 +26,9 @@ static void end_of_task() {
 }
 
 void switch_context() {
-  cur_task++;
-  if (cur_task == num_tasks) {
-    cur_task = 0;
+  cur_task_id++;
+  if (cur_task_id == num_tasks) {
+    cur_task_id = 0;
   }
 }
 
@@ -67,7 +64,6 @@ void task_yield() {
 void run_tasks() {
   // No tasks to run
   if (num_tasks <= 0) return;
-  cur_task = 0;
 
   // Enable pendsv int
   NVIC_SetPriority(PEND_SV_IRQn, 0xFF);
