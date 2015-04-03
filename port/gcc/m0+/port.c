@@ -4,6 +4,7 @@
 #include "port.h"
 
 #include "drivers/nvic.h"
+#include "drivers/port_systick.h"
 
 void pend_sv_handler() __attribute__((naked, interrupt));
 extern void switch_context();
@@ -31,8 +32,13 @@ inline void port_critical_end() {
   );
 }
 
-void port_task_yield() {
+inline void port_task_yield() {
   NVIC_SetPendingIRQ(PEND_SV_IRQn);
+}
+
+void systick_handler() {
+  port_task_yield();
+  NVIC_ClearPendingIRQ(SYSTICK_IRQn);
 }
 
 void pend_sv_handler() {
@@ -65,6 +71,7 @@ void pend_sv_handler() {
   tasks[cur_task_id].sp = psp;
   switch_context();
   psp = tasks[cur_task_id].sp;
+  NVIC_ClearPendingIRQ(PEND_SV_IRQn);
   port_critical_end();
 
   asm volatile (
@@ -101,6 +108,9 @@ void port_start_scheduler() {
   // Enable pendsv int
   NVIC_SetPriority(PEND_SV_IRQn, 0xFF);
 
+  // Setup systick
+  systick_init();
+
   psp = tasks[cur_task_id].sp;
 
   psp = psp + 32;
@@ -116,6 +126,8 @@ void port_start_scheduler() {
     :
     : [ctrl] "r" (ctrl)
   );
+
+  port_critical_end();
 
   asm volatile (
     "POP {r0-r5}\n"

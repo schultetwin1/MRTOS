@@ -1,10 +1,12 @@
 #include "drivers/port_rcc.h"
 #include "drivers/nvic.h"
+#include "port.h"
 
 extern unsigned _stack;
 extern unsigned _data_loadaddr, _data, _edata, _ebss;
 extern void timer_handler(void);
 extern void pend_sv_handler(void);
+extern void systick_handler(void);
 
 typedef void (*vector_table_entry_t)(void);
 
@@ -41,7 +43,7 @@ vector_table_t vector_table = {
   .hard_fault = hard_fault_handler,
   .sv_call = sv_call_handler,
   .pend_sv = pend_sv_handler,
-  .systick = null_handler,
+  .systick = systick_handler,
   .IRQ = {
     blocking_handler, // 0
     blocking_handler, // 1
@@ -79,6 +81,9 @@ void reset_handler(void)
   while (dest < &_ebss) {
     *dest++ = 0;
   }
+
+  // Disable all interrupts
+  port_critical_start();
 
   // Switch to 16MHz clk
   rcc_hsi16_enable();
