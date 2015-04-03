@@ -1,8 +1,6 @@
 #include "drivers/nvic.h"
 #include "task.h"
 
-extern void start_scheduler();
-
 int num_tasks = 0;
 TaskID cur_task_id = -1;
 
@@ -41,7 +39,5 @@ void run_tasks() {
   // No tasks to run
   if (num_tasks <= 0) return;
 
-  // Enable pendsv int
-  NVIC_SetPriority(PEND_SV_IRQn, 0xFF);
   port_start_scheduler();
 }
