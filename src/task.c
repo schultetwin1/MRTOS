@@ -33,8 +33,6 @@ void switch_context() {
 }
 
 TaskID add_task(FuncPtr fn, FuncArgs args) {
-  hw_stack_frame_t* frame;
-
   if (num_tasks == MAX_NUM_TASKS) {
     return MAX_NUM_TASKS;
   }
@@ -42,17 +40,7 @@ TaskID add_task(FuncPtr fn, FuncArgs args) {
   TaskID id = num_tasks++;
   tasks[id].sp = (uint8_t*)(((uint8_t*)&stacks[id]) + STACK_SIZE);
 
-  // -1 in order to leave the top empty
-  // (for a usual stack frame that would be the last entry from the before the interrupt)
-  // @TODO: Not portable
-  frame = (hw_stack_frame_t*)(tasks[id].sp - sizeof(hw_stack_frame_t) - 4);
-  frame->xPSR = 0x01000000;
-  frame->PC = (uint32_t)fn;
-  frame->LR = (uint32_t)end_of_task;
-  frame->R0 = (uint32_t)args;
-
-  // Update sp for task
-  tasks[id].sp = (uint8_t*)frame - 32;
+  tasks[id].sp = port_init_stack(tasks[id].sp, fn, args, end_of_task);
 
   return id;
 }

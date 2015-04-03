@@ -3,6 +3,8 @@
 #include "task.h"
 #include "port.h"
 
+#include "drivers/nvic.h"
+
 void pend_sv_handler() __attribute__((naked, interrupt));
 void start_scheduler() __attribute__((naked));
 extern void switch_context();
@@ -28,6 +30,10 @@ inline void critical_end() {
     : [MASK] "r" (PRIMASK)
     : "r0"
   );
+}
+
+void port_task_yield() {
+  NVIC_SetPendingIRQ(PEND_SV_IRQn);
 }
 
 void pend_sv_handler() {
@@ -117,4 +123,25 @@ void start_scheduler() {
     :
     : "r0", "r1", "r2", "r3", "r4", "r5", "lr"
   );
+}
+
+uint8_t* port_init_stack(uint8_t* sp, FuncPtr fn, FuncArgs args, FuncPtr lr) {
+  // -1 in order to leave the top empty
+  // (for a usual stack frame that would be the last entry from the before the interrupt)
+  uint32_t* wsp = (uint32_t*)sp;
+  wsp -= 1;
+
+  *wsp = 0x01000000;
+  wsp -= 1;
+
+  *wsp = (uint32_t)fn;
+  wsp -= 1;
+
+  *wsp = (uint32_t)lr;
+  wsp -= 5;
+
+  *wsp = (uint32_t)args;
+  wsp -= 8;
+
+  return (uint8_t*)wsp;
 }
