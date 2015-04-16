@@ -3,7 +3,7 @@
 
 typedef volatile struct {
   uint32_t SYST_CSR;
-  uint32_t SYST_RSR;
+  uint32_t SYST_RVR;
   uint32_t SYST_CVR;
   const uint32_t SYST_CALIB;
 } systick_t;
@@ -16,6 +16,10 @@ void systick_enable() {
 
 void systick_disable() {
   SYSTICK->SYST_CSR &= ~1;
+}
+
+void systick_countflag() {
+  SYSTICK->SYST_CSR;
 }
 
 void systick_enable_int() {
@@ -36,11 +40,11 @@ void systick_external_src() {
 
 void systick_set_reload_value(uint32_t value) {
   value &= 0x00FFFF;
-  SYSTICK->SYST_RSR = value;
+  SYSTICK->SYST_RVR = value;
 }
 
 uint32_t systick_get_reload_value() {
-  return SYSTICK->SYST_RSR;
+  return SYSTICK->SYST_RVR;
 }
 
 uint32_t systick_get_count() {
@@ -49,7 +53,10 @@ uint32_t systick_get_count() {
 
 void systick_init() {
   // Program reload
-  systick_set_reload_value(0x00FFFFFF);
+  // Cause tick every second
+  // @TODO: Not working
+  systick_set_reload_value(0x00F42400);
+  //systick_set_reload_value(0x00FFFFFF);
 
   // Clear current register
   systick_get_count();
@@ -59,7 +66,6 @@ void systick_init() {
 
   // Enable interrupts
   systick_enable_int();
-  NVIC_EnableIRQ(SYSTICK_IRQn);
 
   // Enable Tick
   systick_enable();

@@ -6,8 +6,8 @@ typedef volatile struct {
   uint32_t GPIOx_MODER;
 
   // 0x04
-  uint16_t _reserved1;
   uint16_t GPIOx_OTYPER;
+  uint16_t _reserved1;
 
   // 0x08
   uint32_t GPIOx_OSPEEDR;
@@ -75,4 +75,21 @@ void gpio_write(uint8_t port, uint8_t pin_num, uint8_t write) {
 uint8_t gpio_read(uint8_t port, uint8_t pin_num) {
   gpio_t * const gpio = gpiox_baseaddr(port);
   return (gpio->GPIOx_IDR >> pin_num) & 0x1;
+}
+
+void gpio_set_pull(uint8_t port, uint8_t pin_num, gpio_pull_t pull) {
+  gpio_t * const gpio = gpiox_baseaddr(port);
+  gpio->GPIOx_PUPDR &= ~(3 << (pin_num * 2));
+  gpio->GPIOx_PUPDR |= (pull << (pin_num * 2));
+}
+
+void gpio_set_alt_func(uint8_t port, uint8_t pin_num, gpio_altfunc_t altfunc) {
+  gpio_t * const gpio = gpiox_baseaddr(port);
+  uint32_t volatile * AFR = &(gpio->GPIOx_AFRL);
+  if (pin_num > 7) {
+    AFR = &(gpio->GPIOx_AFRH);
+    pin_num -= 8;
+  }
+  *AFR &= ~(0xF << (pin_num * 4));
+  *AFR |= (altfunc << (pin_num * 4));
 }

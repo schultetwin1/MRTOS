@@ -1,6 +1,6 @@
 #include "drivers/nvic.h"
 
-typedef struct {
+typedef volatile struct {
   uint32_t _reserved3  : 12;
   uint32_t VECTPENDING :  6;
   uint32_t _reserved2  :  7;
@@ -12,7 +12,7 @@ typedef struct {
   uint32_t NMIPENDSET  :  1;
 } ICSR_t;
 
-typedef struct {
+typedef volatile struct {
   uint16_t _reserved1;
   uint8_t  PRI_14;
   uint8_t  PRI_15;
