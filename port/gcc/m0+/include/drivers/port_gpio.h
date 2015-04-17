@@ -25,9 +25,29 @@ typedef enum {
   GPIO_AF7 = 7
 } gpio_altfunc_t;
 
-void gpio_set_pull(uint8_t port, uint8_t pin_num, gpio_pull_t pull);
+typedef enum {
+  GPIO_INPUT_MODE    = 0,
+  GPIO_OUTPUT_MODE   = 1,
+  GPIO_ALT_FUNC_MODE = 2,
+  GPIO_ANALOG_MODE   = 3
+} gpio_mode_t;
 
+typedef enum {
+  GPIO_SPEED_VERY_LOW = 0,
+  GPIO_SPEED_LOW      = 1,
+  GPIO_SPEED_MEDIUM   = 2,
+  GPIO_SPEED_HIGH     = 3
+} gpio_speed_t;
+
+typedef enum {
+  GPIO_TYPE_PUSH_PULL = 0,
+  GPIO_TYPE_OPEN_DRAIN = 1
+} gpio_type_t;
+
+void gpio_set_pull(uint8_t port, uint8_t pin_num, gpio_pull_t pull);
+void gpio_set_speed(uint8_t port, uint8_t pin_num, gpio_speed_t speed);
 void gpio_set_alt_func(uint8_t port, uint8_t pin_num, gpio_altfunc_t altfunc);
+void gpio_set_type(uint8_t port, uint8_t pin_num, gpio_type_t type);
 
 
 #endif

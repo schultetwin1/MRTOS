@@ -23,7 +23,8 @@ void toggle_ledB(void* args) {
 }
 
 int main() {
-  uint8_t arr[1];
+  uint8_t snd[1];
+  uint8_t rcv[1];
   gpio_init(GPIOA);
   gpio_init(GPIOB);
   
@@ -32,15 +33,17 @@ int main() {
 
   uart_init();
 
-  arr[0] = 0xFF;
+  snd[0] = 0xAA;
 
   while (1) {
-    uart_send(arr, 1);
-    toggle_ledA();
+    uart_send(snd, 1);
+    uart_recv(rcv, 1);
+    if (snd[0] == rcv[0]) {
+      toggle_ledA();
+    }
   }
 
   //run_tasks();
-
 
   // Should never hit here
   while (1);

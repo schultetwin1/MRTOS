@@ -222,17 +222,15 @@ void uart_init() {
 
   // Set TX and RX as pullup and AF4
   // TX
-  gpio_set_mode(GPIOA, 9, GPIO_OUTPUT_MODE);
+  gpio_set_mode(GPIOA, 9, GPIO_ALT_FUNC_MODE);
+  gpio_set_type(GPIOA, 9, GPIO_TYPE_PUSH_PULL);
   gpio_set_pull(GPIOA, 9, GPIO_PULLUP);
   gpio_set_alt_func(GPIOA, 9, GPIO_AF4);
-  // RX
-  gpio_set_mode(GPIOA, 10, GPIO_INPUT_MODE);
-  gpio_set_pull(GPIOA, 10, GPIO_PULLUP);
-  gpio_set_alt_func(GPIOA, 10, GPIO_AF4);
 
-  // USART CK
-  gpio_set_mode(GPIOA, 8, GPIO_OUTPUT_MODE);
-  gpio_set_alt_func(GPIOA, 8, GPIO_AF4);
+  // RX
+  gpio_set_mode(GPIOA, 10, GPIO_ALT_FUNC_MODE);
+  gpio_set_type(GPIOA, 10, GPIO_TYPE_PUSH_PULL);
+  gpio_set_alt_func(GPIOA, 10, GPIO_AF4);
 
   // Set word length (CR1)
   USART1->CR1.M1 = 0;
@@ -250,22 +248,27 @@ void uart_init() {
 
   // Enable USART (write UE bit in CR1 to 1)
   USART1->CR1.UE = 1;
+
+  // Set TE bit to enable TX
+  USART1->CR1.TE = 1;
+  // Set RE bit to enable RX
+  USART1->CR1.RE = 1;
+
 }
 
 void uart_send(uint8_t* data, size_t len) {
   size_t cnt = 0;
 
+  // Wait for TXE
+  while (!USART1->ISR.TXE)
+    ;
+
   while (cnt < len) {
-    // Set TE bit to enable TX
-    USART1->CR1.TE = 1;
-
-    // Wait for TEACK
-    while (!USART1->ISR.TEACK)
-      ;
-
     // Write data to send in TDR
     USART1->TDR = *data;
 
+    while (!USART1->ISR.TXE)
+      ;
     data++;
     cnt++;
   }
@@ -273,4 +276,21 @@ void uart_send(uint8_t* data, size_t len) {
   // Wait for TC = 1
   while (!USART1->ISR.TC)
     ;
+}
+
+void uart_recv(uint8_t* data, size_t len) {
+  size_t cnt = 0;
+
+
+  while (cnt < len) {
+    // Wait for RXNE
+    while (!USART1->ISR.RXNE)
+      ;
+    
+    // Read in data
+    *data = USART1->RDR;
+
+    data++;
+    cnt++;
+  }
 }

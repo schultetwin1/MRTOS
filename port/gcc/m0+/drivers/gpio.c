@@ -83,6 +83,12 @@ void gpio_set_pull(uint8_t port, uint8_t pin_num, gpio_pull_t pull) {
   gpio->GPIOx_PUPDR |= (pull << (pin_num * 2));
 }
 
+void gpio_set_speed(uint8_t port, uint8_t pin_num, gpio_speed_t speed) {
+  gpio_t * const gpio = gpiox_baseaddr(port);
+  gpio->GPIOx_OSPEEDR &= ~(3 << (pin_num * 2));
+  gpio->GPIOx_OSPEEDR |= (speed << (pin_num * 2));
+}
+
 void gpio_set_alt_func(uint8_t port, uint8_t pin_num, gpio_altfunc_t altfunc) {
   gpio_t * const gpio = gpiox_baseaddr(port);
   uint32_t volatile * AFR = &(gpio->GPIOx_AFRL);
@@ -92,4 +98,9 @@ void gpio_set_alt_func(uint8_t port, uint8_t pin_num, gpio_altfunc_t altfunc) {
   }
   *AFR &= ~(0xF << (pin_num * 4));
   *AFR |= (altfunc << (pin_num * 4));
+}
+
+void gpio_set_type(uint8_t port, uint8_t pin_num, gpio_type_t type) {
+  gpio_t * const gpio = gpiox_baseaddr(port);
+  gpio->GPIOx_OTYPER |= (type << pin_num);
 }

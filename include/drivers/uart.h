@@ -6,5 +6,6 @@
 
 void uart_init();
 void uart_send(uint8_t* data, size_t len);
+void uart_recv(uint8_t* data, size_t len);
 
 #endif
