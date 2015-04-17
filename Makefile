@@ -40,7 +40,8 @@ OOCD_BOARD ?= stm32l0discovery
 
 ##################################
 # C flags
-CFLAGS += -Wall -Werror -Iinclude -I$(PORT_DIR)/include
+CFLAGS += -Wall -Werror -Wno-packed-bitfield-compat
+CFLAGS += -Iinclude -I$(PORT_DIR)/include
 CFLAGS += -fno-common -ffunction-sections -fdata-sections -fomit-frame-pointer
 
 ##################################

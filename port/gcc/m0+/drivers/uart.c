@@ -29,6 +29,8 @@ typedef volatile struct __attribute__((__packed__)) {
   uint8_t _reserved : 3;
 } USARTx_CR1_t;
 
+_Static_assert(sizeof(USARTx_CR1_t) == 4, "Incorrectly sized UART CR1 struct");
+
 typedef volatile struct __attribute__((__packed__)) {
   uint8_t _reserved1 : 4;
   uint8_t ADDM7    : 1;
@@ -51,6 +53,8 @@ typedef volatile struct __attribute__((__packed__)) {
   uint8_t RTOEN    : 1;
   uint8_t ADD      : 8;
 } USARTx_CR2_t;
+
+_Static_assert(sizeof(USARTx_CR2_t) == 4, "Incorrectly sized UART CR2 struct");
 
 typedef volatile struct __attribute__((__packed__)) {
   uint8_t EIE      : 1;
@@ -76,16 +80,22 @@ typedef volatile struct __attribute__((__packed__)) {
   uint16_t _reserved2 : 9;
 } USARTx_CR3_t;
 
+_Static_assert(sizeof(USARTx_CR3_t) == 4, "Incorrectly sized UART CR3 struct");
+
 typedef volatile struct __attribute__((__packed__)) {
   uint8_t PSC : 8;
   uint8_t GT  : 8;
   uint16_t _reserved : 16;
 } USARTx_GTPR_t;
 
+_Static_assert(sizeof(USARTx_GTPR_t) == 4, "Incorrectly sized UART GTPR struct");
+
 typedef volatile struct __attribute__((__packed__)) {
   uint32_t RTO  : 24;
-  uint8_t  BLEN : 7;
+  uint8_t  BLEN : 8;
 } USARTx_RTOR_t;
+
+_Static_assert(sizeof(USARTx_RTOR_t) == 4, "Incorrectly sized UART RTOR struct");
 
 typedef volatile struct __attribute__((__packed__)) {
   uint8_t ABRRQ : 1;
@@ -95,6 +105,8 @@ typedef volatile struct __attribute__((__packed__)) {
   uint8_t TXFRQ : 1;
   uint32_t _reserved : 27;
 } USARTx_RQR_t;
+
+_Static_assert(sizeof(USARTx_RQR_t) == 4, "Incorrectly sized UART RQR struct");
 
 typedef volatile struct __attribute__((__packed__)) {
   uint8_t PE     : 1;
@@ -122,6 +134,8 @@ typedef volatile struct __attribute__((__packed__)) {
   uint8_t REACK  : 1;
   uint16_t _reserved2 : 9;
 } USARTx_ISR_t;
+
+_Static_assert(sizeof(USARTx_ISR_t) == 4, "Incorrectly sized UART ISR struct");
 
 typedef volatile struct __attribute__((__packed__)) {
   uint8_t PECF    : 1;
@@ -155,6 +169,8 @@ typedef volatile struct __attribute__((__packed__)) {
   uint16_t _reserved6 : 11;
 } USARTx_ICR_t;
 
+_Static_assert(sizeof(USARTx_ICR_t) == 4, "Incorrectly sized UART ICR struct");
+
 
 
 typedef volatile struct __attribute__((__packed__)) {
@@ -183,6 +199,8 @@ typedef volatile struct __attribute__((__packed__)) {
   uint8_t _reserved6;
   uint8_t _reserved7;
 } USARTx_t;
+
+_Static_assert(sizeof(USARTx_t) == 0x2C, "Incorrectly sized UART struct");
 
 // @TODO: Use more than just UART1
 static USARTx_t volatile * const USART1 = (USARTx_t volatile * const)(0x40013800);
@@ -238,9 +256,10 @@ void uart_send(uint8_t* data, size_t len) {
   size_t cnt = 0;
 
   while (cnt < len) {
-    // Set TE bit in UARTx_CR1 to send an idle frame as first transmission
+    // Set TE bit to enable TX
     USART1->USARTx_CR1.TE = 1;
 
+    // Wait for TEACK
     while (!USART1->USARTx_ISR.TEACK)
       ;
 

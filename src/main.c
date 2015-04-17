@@ -7,7 +7,7 @@
 #include "drivers/uart.h"
 
 void toggle_ledA() {
-  static  int toggle = 0;
+  static int toggle = 0;
   gpio_write(GPIOA, 5, toggle);
   toggle ^= 1;
   delay(1000);
