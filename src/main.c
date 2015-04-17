@@ -32,13 +32,18 @@ int main() {
   gpio_set_mode(GPIOB, 4, GPIO_OUTPUT_MODE);
 
   uart_init();
+  uart_set_wordlength(8);
+  uart_set_baudrate(115200);
+  uart_set_parity(UART_NO_PARITY);
+  uart_set_stop_bits(UART_ONE_STOP_BIT);
+  uart_enable();
 
-  snd[0] = 0xAA;
+  snd[0] = 'a';
 
   while (1) {
     uart_send(snd, 1);
     uart_recv(rcv, 1);
-    if (snd[0] == rcv[0]) {
+    if ('a' == rcv[0]) {
       toggle_ledA();
     }
   }

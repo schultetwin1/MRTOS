@@ -231,30 +231,81 @@ void uart_init() {
   gpio_set_mode(GPIOA, 10, GPIO_ALT_FUNC_MODE);
   gpio_set_type(GPIOA, 10, GPIO_TYPE_PUSH_PULL);
   gpio_set_alt_func(GPIOA, 10, GPIO_AF4);
+}
 
-  // Set word length (CR1)
-  USART1->CR1.M1 = 0;
-  USART1->CR1.M0 = 0;
+void uart_set_parity(uart_parity_t parity) {
+  if (parity == UART_NO_PARITY) {
+    USART1->CR1.PCE = 0;
+    return;
+  }
 
-  // Disable parity
-  USART1->CR1.PCE = 0;
+  USART1->CR1.PCE = 1;
+  
+  if (parity == UART_EVEN_PARITY) {
+    USART1->CR1.PS = 0;
+  } else {
+    USART1->CR1.PS = 1;
+  }
+}
 
-  // Set baud rate (BRR)
-  // Setting to 9600
-  // USART1->BRR = 0xD05;
-  uart_set_baudrate(115200);
+void uart_set_stop_bits(uart_stop_bit_t stopbit) {
+  switch (stopbit) {
+    case UART_ONE_STOP_BIT:
+      USART1->CR2.STOP = 0x0;
+      break;
 
-  // Set number of stop bits (CR2)
-  USART1->CR2.STOP = 0x00;
+    case UART_ONE_POINT_FIVE_STOP_BIT:
+      USART1->CR2.STOP = 0x3;
+      break;
 
+    case UART_TWO_STOP_BIT:
+      USART1->CR2.STOP = 0x2;
+      break;
+  }
+}
+
+void uart_enable() {
   // Enable USART (write UE bit in CR1 to 1)
   USART1->CR1.UE = 1;
 
   // Set TE bit to enable TX
   USART1->CR1.TE = 1;
+
   // Set RE bit to enable RX
   USART1->CR1.RE = 1;
+}
 
+void uart_disable() {
+  // Set TE bit to enable TX
+  USART1->CR1.TE = 0;
+
+  // Set RE bit to enable RX
+  USART1->CR1.RE = 0;
+
+  // Enable USART (write UE bit in CR1 to 1)
+  USART1->CR1.UE = 0;
+}
+
+void uart_set_wordlength(int wordlength) {
+  switch (wordlength) {
+    case 7:
+      USART1->CR1.M1 = 1;
+      USART1->CR1.M0 = 0;
+      break;
+
+    case 8:
+      USART1->CR1.M1 = 0;
+      USART1->CR1.M0 = 0;
+      break;
+
+    case 9:
+      USART1->CR1.M1 = 0;
+      USART1->CR1.M0 = 1;
+      break;
+
+    default:
+      break;
+  }
 }
 
 void uart_set_baudrate(unsigned baudrate) {
