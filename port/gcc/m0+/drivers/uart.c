@@ -2,7 +2,7 @@
 
 #include "drivers/port_rcc.h"
 #include "drivers/gpio.h"
-#include "drivers/port_uart.h"
+#include "drivers/uart.h"
 
 typedef volatile struct __attribute__((__packed__)) {
   uint8_t UE     : 1;
@@ -241,7 +241,8 @@ void uart_init() {
 
   // Set baud rate (BRR)
   // Setting to 9600
-  USART1->BRR = 0xD05;
+  // USART1->BRR = 0xD05;
+  uart_set_baudrate(9600);
 
   // Set number of stop bits (CR2)
   USART1->CR2.STOP = 0x00;
@@ -254,6 +255,50 @@ void uart_init() {
   // Set RE bit to enable RX
   USART1->CR1.RE = 1;
 
+}
+
+void uart_set_baudrate(unsigned baudrate) {
+  // Set baud rate (BRR)
+  // Assume OVER8 == 0
+  // Assume clk = 16 MHz
+  // 16000000 / baudrate can't be done since I don't have division
+  switch (baudrate) {
+    case 2400:
+      USART1->BRR = 6667;
+      break;
+    case 9600:
+      USART1->BRR = 1667;
+      break;
+    case 19200:
+      USART1->BRR = 833;
+      break;
+    case 38400:
+      USART1->BRR = 417;
+      break;
+    case 57600:
+      USART1->BRR = 278;
+      break;
+    case 115200:
+      USART1->BRR = 139;
+      break;
+    case 230400:
+      USART1->BRR = 69;
+      break;
+    case 460800:
+      USART1->BRR = 35;
+      break;
+    case 921600:
+      USART1->BRR = 17;
+      break;
+    case 2000000:
+      USART1->BRR = 8;
+      break;
+    case 4000000:
+      USART1->BRR = 4;
+      break;
+    default:
+      break;
+  }
 }
 
 void uart_send(uint8_t* data, size_t len) {
