@@ -242,7 +242,7 @@ void uart_init() {
   // Set baud rate (BRR)
   // Setting to 9600
   // USART1->BRR = 0xD05;
-  uart_set_baudrate(9600);
+  uart_set_baudrate(115200);
 
   // Set number of stop bits (CR2)
   USART1->CR2.STOP = 0x00;
