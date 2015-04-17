@@ -27,9 +27,9 @@ typedef volatile struct __attribute__((__packed__)) {
   uint8_t EOBIE  : 1;
   uint8_t M1     : 1;
   uint8_t _reserved : 3;
-} USARTx_CR1_t;
+} CR1_t;
 
-_Static_assert(sizeof(USARTx_CR1_t) == 4, "Incorrectly sized UART CR1 struct");
+_Static_assert(sizeof(CR1_t) == 4, "Incorrectly sized UART CR1 struct");
 
 typedef volatile struct __attribute__((__packed__)) {
   uint8_t _reserved1 : 4;
@@ -52,9 +52,9 @@ typedef volatile struct __attribute__((__packed__)) {
   uint8_t ABRMOD   : 2;
   uint8_t RTOEN    : 1;
   uint8_t ADD      : 8;
-} USARTx_CR2_t;
+} CR2_t;
 
-_Static_assert(sizeof(USARTx_CR2_t) == 4, "Incorrectly sized UART CR2 struct");
+_Static_assert(sizeof(CR2_t) == 4, "Incorrectly sized UART CR2 struct");
 
 typedef volatile struct __attribute__((__packed__)) {
   uint8_t EIE      : 1;
@@ -78,24 +78,24 @@ typedef volatile struct __attribute__((__packed__)) {
   uint8_t WUS      : 2;
   uint8_t WUFIE    : 1;
   uint16_t _reserved2 : 9;
-} USARTx_CR3_t;
+} CR3_t;
 
-_Static_assert(sizeof(USARTx_CR3_t) == 4, "Incorrectly sized UART CR3 struct");
+_Static_assert(sizeof(CR3_t) == 4, "Incorrectly sized UART CR3 struct");
 
 typedef volatile struct __attribute__((__packed__)) {
   uint8_t PSC : 8;
   uint8_t GT  : 8;
   uint16_t _reserved : 16;
-} USARTx_GTPR_t;
+} GTPR_t;
 
-_Static_assert(sizeof(USARTx_GTPR_t) == 4, "Incorrectly sized UART GTPR struct");
+_Static_assert(sizeof(GTPR_t) == 4, "Incorrectly sized UART GTPR struct");
 
 typedef volatile struct __attribute__((__packed__)) {
   uint32_t RTO  : 24;
   uint8_t  BLEN : 8;
-} USARTx_RTOR_t;
+} RTOR_t;
 
-_Static_assert(sizeof(USARTx_RTOR_t) == 4, "Incorrectly sized UART RTOR struct");
+_Static_assert(sizeof(RTOR_t) == 4, "Incorrectly sized UART RTOR struct");
 
 typedef volatile struct __attribute__((__packed__)) {
   uint8_t ABRRQ : 1;
@@ -104,9 +104,9 @@ typedef volatile struct __attribute__((__packed__)) {
   uint8_t RXFRQ : 1;
   uint8_t TXFRQ : 1;
   uint32_t _reserved : 27;
-} USARTx_RQR_t;
+} RQR_t;
 
-_Static_assert(sizeof(USARTx_RQR_t) == 4, "Incorrectly sized UART RQR struct");
+_Static_assert(sizeof(RQR_t) == 4, "Incorrectly sized UART RQR struct");
 
 typedef volatile struct __attribute__((__packed__)) {
   uint8_t PE     : 1;
@@ -133,9 +133,9 @@ typedef volatile struct __attribute__((__packed__)) {
   uint8_t TEACK  : 1;
   uint8_t REACK  : 1;
   uint16_t _reserved2 : 9;
-} USARTx_ISR_t;
+} ISR_t;
 
-_Static_assert(sizeof(USARTx_ISR_t) == 4, "Incorrectly sized UART ISR struct");
+_Static_assert(sizeof(ISR_t) == 4, "Incorrectly sized UART ISR struct");
 
 typedef volatile struct __attribute__((__packed__)) {
   uint8_t PECF    : 1;
@@ -167,34 +167,34 @@ typedef volatile struct __attribute__((__packed__)) {
   uint8_t WUCF    : 1;
 
   uint16_t _reserved6 : 11;
-} USARTx_ICR_t;
+} ICR_t;
 
-_Static_assert(sizeof(USARTx_ICR_t) == 4, "Incorrectly sized UART ICR struct");
+_Static_assert(sizeof(ICR_t) == 4, "Incorrectly sized UART ICR struct");
 
 
 
 typedef volatile struct __attribute__((__packed__)) {
-  USARTx_CR1_t USARTx_CR1;
-  USARTx_CR2_t USARTx_CR2;
-  USARTx_CR3_t USARTx_CR3;
+  CR1_t CR1;
+  CR2_t CR2;
+  CR3_t CR3;
 
-  uint16_t     USARTx_BRR;
+  uint16_t     BRR;
   uint16_t     _reserved1;
 
-  USARTx_GTPR_t USARTx_GTPR;
+  GTPR_t GTPR;
 
-  USARTx_RTOR_t USARTx_RTOR;
+  RTOR_t RTOR;
 
-  USARTx_RQR_t USARTx_RQR;
-  USARTx_ISR_t USARTx_ISR;
-  USARTx_ICR_t USARTx_ICR;
+  RQR_t RQR;
+  ISR_t ISR;
+  ICR_t ICR;
 
-  uint8_t USARTx_RDR;
+  uint8_t RDR;
   uint8_t _reserved2;
   uint8_t _reserved3;
   uint8_t _reserved4;
 
-  uint8_t USARTx_TDR;
+  uint8_t TDR;
   uint8_t _reserved5;
   uint8_t _reserved6;
   uint8_t _reserved7;
@@ -234,22 +234,22 @@ void uart_init() {
   gpio_set_mode(GPIOA, 8, GPIO_OUTPUT_MODE);
   gpio_set_alt_func(GPIOA, 8, GPIO_AF4);
 
-  // Set word length (USARTx_CR1)
-  USART1->USARTx_CR1.M1 = 0;
-  USART1->USARTx_CR1.M0 = 0;
+  // Set word length (CR1)
+  USART1->CR1.M1 = 0;
+  USART1->CR1.M0 = 0;
 
   // Disable parity
-  USART1->USARTx_CR1.PCE = 0;
+  USART1->CR1.PCE = 0;
 
-  // Set baud rate (USARTx_BRR)
+  // Set baud rate (BRR)
   // Setting to 9600
-  USART1->USARTx_BRR = 0xD05;
+  USART1->BRR = 0xD05;
 
-  // Set number of stop bits (USARTx_CR2)
-  USART2->USARTx_CR2.STOP = 0x00;
+  // Set number of stop bits (CR2)
+  USART1->CR2.STOP = 0x00;
 
-  // Enable USART (write UE bit in USARTx_CR1 to 1)
-  USART1->USARTx_CR1.UE = 1;
+  // Enable USART (write UE bit in CR1 to 1)
+  USART1->CR1.UE = 1;
 }
 
 void uart_send(uint8_t* data, size_t len) {
@@ -257,20 +257,20 @@ void uart_send(uint8_t* data, size_t len) {
 
   while (cnt < len) {
     // Set TE bit to enable TX
-    USART1->USARTx_CR1.TE = 1;
+    USART1->CR1.TE = 1;
 
     // Wait for TEACK
-    while (!USART1->USARTx_ISR.TEACK)
+    while (!USART1->ISR.TEACK)
       ;
 
-    // Write data to send in USARTx_TDR
-    USART1->USARTx_TDR = *data;
+    // Write data to send in TDR
+    USART1->TDR = *data;
 
     data++;
     cnt++;
   }
 
   // Wait for TC = 1
-  while (!USART1->USARTx_ISR.TC)
+  while (!USART1->ISR.TC)
     ;
 }
