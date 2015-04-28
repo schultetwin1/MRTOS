@@ -1,35 +1,13 @@
 #include "drivers/gpio.h"
-#include "drivers/nvic.h"
 #include "task.h"
-#include "drivers/timer.h"
 #include "utils.h"
-#include "vtimer.h"
 #include "drivers/uart.h"
 
-void toggle_ledA() {
-  static int toggle = 0;
-  gpio_write(GPIOA, 5, toggle);
-  toggle ^= 1;
-  delay(1000);
-}
-
-void toggle_ledB(void* args) {
-  //int toggle = 0;
-  while (1) {
-    gpio_write(GPIOA, 5, 0);
-    //toggle ^= 1;
-    //delay(1000);
-  }
-}
-
-int main() {
-  uint8_t snd[1];
+void uart_task(void* arg) {
   uint8_t rcv[1];
+
   gpio_init(GPIOA);
-  gpio_init(GPIOB);
-  
   gpio_set_mode(GPIOA, 5, GPIO_OUTPUT_MODE);
-  gpio_set_mode(GPIOB, 4, GPIO_OUTPUT_MODE);
 
   uart_init();
   uart_set_wordlength(8);
@@ -38,19 +16,34 @@ int main() {
   uart_set_stop_bits(UART_ONE_STOP_BIT);
   uart_enable();
 
-  snd[0] = 'a';
+  while (rcv[0] != 'a') {
+    uart_recv(rcv, 1);
+  }
+  gpio_write(GPIOA, 5, 1);
+  while (1);
+
+}
+
+void toggle_task(void* arg) {
+  int toggle = 0;
+
+  gpio_init(GPIOB);
+  gpio_set_mode(GPIOB, 4, GPIO_OUTPUT_MODE);
 
   while (1) {
-    uart_send(snd, 1);
-    uart_recv(rcv, 1);
-    if ('a' == rcv[0]) {
-      toggle_ledA();
-    }
+    toggle ^= 1;
+    gpio_write(GPIOB, 4, toggle);
+    delay(1000);
   }
 
-  //run_tasks();
+}
 
-  // Should never hit here
+int main() {
+
+  add_task(uart_task, NULL);
+  add_task(toggle_task, NULL);
+  run_tasks();
+
   while (1);
   return 0;
 }
