@@ -1,10 +1,14 @@
 #include "drivers/gpio.h"
 #include "drivers/spi.h"
+#include "drivers/port_rcc.h"
 
 void spi_init() {
   // Enable gpios
   gpio_init(GPIOA);
   gpio_init(GPIOB);
+
+  // Enable SPI1 clk
+  RCC->RCC_APB2ENR |= (1 << 12);
 
   // Setup MOSI, MISO, SCK, and NSS pins
   // SCK (B3)
