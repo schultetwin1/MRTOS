@@ -10,6 +10,6 @@ void spi_set_endianess(spi_endianess_t endianess);
 void spi_enable();
 void spi_disable();
 
-void spi_write(uint8_t* data);
-void spi_read(uint8_t* data);
+void spi_write(uint16_t data);
+uint16_t spi_read();
 #endif

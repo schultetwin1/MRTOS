@@ -3,8 +3,8 @@
 
 void spi_init() {
   // Enable gpios
-  gpio_init(PORTA);
-  gpio_init(PORTB);
+  gpio_init(GPIOA);
+  gpio_init(GPIOB);
 
   // Setup MOSI, MISO, SCK, and NSS pins
   // SCK (B3)
@@ -31,7 +31,7 @@ void spi_init() {
 }
 
 void spi_set_baudrate(spi_baudrate_t br) {
-  SPI1->CR1 ~= (0x7 << 3);
+  SPI1->CR1 &= ~(0x7 << 3);
   SPI1->CR1 |= (br << 3);
 }
 
@@ -86,14 +86,14 @@ void spi_disable() {
   SPI1->CR1 &= ~(SPI_SPE);
 }
 
-void spi_write(uint16_t* data) {
+void spi_write(uint16_t data) {
   while (!(SPI1->SR & SPI_TXE))
     ;
   SPI1->DR = data;
 }
 
-void spi_read(uint16_t* data) {
-  while (!(SPI->SR & SPI_RXNE))
+uint16_t spi_read() {
+  while (!(SPI1->SR & SPI_RXNE))
     ;
-  data = SPI1->DR;
+  return SPI1->DR;
 }
