@@ -17,7 +17,7 @@ endif
 
 PORT_DIR ?= port/gcc/m0+
 
-SRC_DIRS := src $(PORT_DIR) $(PORT_DIR)/drivers
+SRC_DIRS := src $(PORT_DIR) $(PORT_DIR)/drivers prj
 HDR_DIRS := include $(PORT_DIR)/include
 SRCS := $(foreach dir, $(SRC_DIRS), $(wildcard $(dir)/*.c))
 HDRS := $(foreach dir, $(HDRS_DIRS), $(wildcard $(dir)/*.h))
