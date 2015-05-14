@@ -6,4 +6,5 @@
 void delay(uint16_t ms);
 void* malloc(unsigned int bytes);
 void free(void* ptr);
+int strlen(const char* str);
 #endif

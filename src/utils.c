@@ -20,3 +20,11 @@ void* malloc(unsigned int bytes) {
 void free(void* ptr) {
   // MT
 }
+
+int strlen(const char* str) {
+  const char* it = str;
+  while(*it) {
+    it++;
+  }
+  return it - str;
+}
