@@ -116,12 +116,12 @@ void rtc_set_time() {
   // Set hours
   RTC->TR &= ~(0x3F << 16);
   RTC->TR |= (1 << 20);
-  RTC->TR |= (2 << 16); 
+  RTC->TR |= (6 << 16); 
 
   // Set minutes
   RTC->TR &= ~(0x7F << 8);
-  RTC->TR |= (5 << 12);
-  RTC->TR |= (0 << 8); 
+  RTC->TR |= (4 << 12);
+  RTC->TR |= (9 << 8); 
 
   // Set seconds
   RTC->TR &= ~(0x7F << 0);
@@ -154,12 +154,143 @@ void rtc_set_time() {
 }
 
 void rtc_read_time(char* buf) {
-  buf[5] = '\0';
   buf[0] = '0' + ((RTC->TR >> 20) & 0x3);
   buf[1] = '0' + ((RTC->TR >> 16) & 0xF);
   buf[2] = ':';
   buf[3] = '0' + ((RTC->TR >> 12) & 0x7);
   buf[4] = '0' + ((RTC->TR >> 8) & 0xF);
+  buf[5] = '\0';
+}
+
+void rtc_read_date(char* buf) {
+  int i = 0;
+  switch ((RTC->DR >> 13) & 0x7) {
+    case 0x1:
+      buf[i++] = 'M';
+      buf[i++] = 'o';
+      buf[i++] = 'n';
+      break;
+
+    case 0x2:
+      buf[i++] = 'T';
+      buf[i++] = 'u';
+      buf[i++] = 'e';
+      break;
+
+    case 0x3:
+      buf[i++] = 'W';
+      buf[i++] = 'e';
+      buf[i++] = 'd';
+      break;
+
+    case 0x4:
+      buf[i++] = 'T';
+      buf[i++] = 'h';
+      buf[i++] = 'u';
+      break;
+
+    case 0x5:
+      buf[i++] = 'F';
+      buf[i++] = 'r';
+      buf[i++] = 'i';
+      break;
+
+    case 0x6:
+      buf[i++] = 'S';
+      buf[i++] = 'a';
+      buf[i++] = 't';
+      break;
+
+    case 0x7:
+      buf[i++] = 'S';
+      buf[i++] = 'u';
+      buf[i++] = 'n';
+      break;
+  }
+
+  buf[i++] = ' ';
+
+  switch ((RTC->DR >> 8) & 0xF) {
+    case 0x0:
+      buf[i++] = 'O';
+      buf[i++] = 'c';
+      buf[i++] = 't';
+      break;
+
+    case 0x1:
+      if ((RTC->DR >> 12) & 0x1) {
+        buf[i++] = 'N';
+        buf[i++] = 'o';
+        buf[i++] = 'v';
+      } else {
+        buf[i++] = 'J';
+        buf[i++] = 'a';
+        buf[i++] = 'n';
+      }
+      break;
+
+    case 0x2:
+      if ((RTC->DR >> 12) & 0x1) {
+        buf[i++] = 'D';
+        buf[i++] = 'e';
+        buf[i++] = 'c';
+      } else {
+        buf[i++] = 'F';
+        buf[i++] = 'e';
+        buf[i++] = 'b';
+      }
+      break;
+
+    case 0x3:
+      buf[i++] = 'M';
+      buf[i++] = 'a';
+      buf[i++] = 'r';
+      break;
+
+    case 0x4:
+      buf[i++] = 'A';
+      buf[i++] = 'p';
+      buf[i++] = 'r';
+      break;
+
+    case 0x5:
+      buf[i++] = 'M';
+      buf[i++] = 'a';
+      buf[i++] = 'y';
+      break;
+
+    case 0x6:
+      buf[i++] = 'J';
+      buf[i++] = 'u';
+      buf[i++] = 'n';
+      break;
+
+    case 0x7:
+      buf[i++] = 'J';
+      buf[i++] = 'u';
+      buf[i++] = 'l';
+      break;
+
+    case 0x8:
+      buf[i++] = 'A';
+      buf[i++] = 'u';
+      buf[i++] = 'g';
+      break;
+
+    case 0x9:
+      buf[i++] = 'S';
+      buf[i++] = 'e';
+      buf[i++] = 'p';
+      break;
+  }
+
+  buf[i++] = ' ';
+
+  buf[i++] = '0' + ((RTC->DR >> 4) & 0x3);
+  buf[i++] = '0' + ((RTC->DR >> 0) & 0xF);
+  buf[i++] = '\0';
+
+
 }
 
 void rtc_set_periodic_wakeup() {
