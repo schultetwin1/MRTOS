@@ -3,23 +3,28 @@
 #include "utils.h"
 #include "drivers/uart.h"
 #include "drivers/port_epd.h"
+#include "drivers/rtc.h"
 
 #include "font.h"
 
 int main() {
-
-  gpio_init(GPIOA);
-  gpio_set_mode(GPIOA, 0, GPIO_INPUT_MODE);
-  while (gpio_read(GPIOA, 0) == 0)
-    ;
-
+  char buf[6];
+  rtc_init();
+  rtc_set_time();
+  rtc_set_periodic_wakeup();
+  rtc_read_time(buf);
   epd_init();
   epd_clr();
-
-  font_drawstr("3:02 pm");
+  font_drawstr(buf);
   epd_refresh_display();
 
-  while (1);
+  while (1) {
+    if (rtc_timer()) {
+      rtc_read_time(buf);
+      font_drawstr(buf);
+      epd_refresh_display();
+    }
+  }
   run_tasks();
 
   while (1);
