@@ -1,6 +1,8 @@
 #ifndef __MRTOS_TASK__
 #define __MRTOS_TASK__
 
+#include <inttypes.h>
+
 #define MAX_NUM_TASKS 10
 #define STACK_SIZE 0x100
 typedef void (*FuncPtr)( void* );
