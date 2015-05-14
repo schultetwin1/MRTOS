@@ -5,7 +5,7 @@ extern int* _heap;
 // Assuming a 2.097Mhz clock
 // THIS WILL NOT WORK FOR millis more than
 void delay(uint16_t ms) {
-  const int MAX = ms * 209;
+  const int MAX = ms * 1600;
   volatile int i;
   for (i = 0; i < MAX; i++);
 }

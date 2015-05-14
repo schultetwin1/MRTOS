@@ -77,6 +77,9 @@ $(BUILD_DIR)/%.elf $(BUILD_DIR)/%.map: $(BUILD_DIR) $(OBJS) $(LDSCRIPT)
 $(BUILD_DIR)/%.o: src/%.c Makefile
 	$(CC) $(CFLAGS) $(ARCH_FLAGS) $(FP_FLAGS) -o $@ -c $<
 
+$(BUILD_DIR)/%.o: prj/%.c Makefile
+	$(CC) $(CFLAGS) $(ARCH_FLAGS) $(FP_FLAGS) -o $@ -c $<
+
 $(BUILD_DIR)/%.o: $(PORT_DIR)/%.c Makefile
 	$(CC) $(CFLAGS) $(ARCH_FLAGS) $(FP_FLAGS) -o $@ -c $<
 
