@@ -4,7 +4,7 @@
 #include "drivers/uart.h"
 #include "drivers/port_epd.h"
 
-#include "fontsepd.h"
+#include "font.h"
 
 int main() {
 
@@ -15,10 +15,8 @@ int main() {
 
   epd_init();
   epd_clr();
-  
-  epd_draw_block(0, 0, Font20.Height, Font20.Width, Font20.table + (Font20.Height * Font20.Width * 33));
-  epd_draw_block(0, Font20.Width, Font20.Height, Font20.Width, Font20.table + (Font20.Height * Font20.Width * 34));
 
+  font_drawstr("3:02 pm");
   epd_refresh_display();
 
   while (1);
