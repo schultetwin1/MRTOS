@@ -1,13 +1,13 @@
-#include "drivers/gpio.h"
 #include "task.h"
 #include "utils.h"
 #include "drivers/uart.h"
 #include "drivers/port_epd.h"
 #include "drivers/rtc.h"
+#include "drivers/gpio.h"
 
 #include "font.h"
 
-int main() {
+void update_time(void* arg) {
   char buf[64];
   rtc_init();
   rtc_set_time();
@@ -30,6 +30,24 @@ int main() {
       epd_refresh_display();
     }
   }
+
+}
+
+void blink_led(void* arg) {
+  int out  = 0;
+  gpio_init(GPIOA);
+  gpio_set_mode(GPIOA, 5, GPIO_OUTPUT_MODE);
+  while (1) {
+    gpio_write(GPIOA, 5, out);
+    out ^= 1;
+    delay(1000);
+  }
+
+}
+
+int main() {
+  add_task(update_time, NULL);
+  add_task(blink_led, NULL);
   run_tasks();
 
   while (1);
