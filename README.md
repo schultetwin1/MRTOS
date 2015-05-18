@@ -89,5 +89,9 @@ Step To Port
   * Define the reset_handler
   * Setup any global variables in the reset_handler
   * Call main in the reset_handler
-3. Rewrite the drivers as needed
-4. Rewrite main.ld for the ports memory layout
+3. Rewrite port.c which should
+  * Define crtical start and end function calls
+  * Setup interrupts for task switching
+  * Setup yield functionality, and starting scheduler
+4. Rewrite the drivers as needed
+5. Rewrite main.ld for the ports memory layout
