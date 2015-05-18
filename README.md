@@ -1,7 +1,7 @@
 MRTOS - Michigan Real Time Operating System
 ===========================================
-Matt Schulte (mttschult@umich.edu)
-Mark Brehob (brehob@umich.edu)
+* Matt Schulte (mttschult@umich.edu)
+* Mark Brehob (brehob@umich.edu)
 
 [Source Code](https://github.com/schultetwin1/MRTOS.git)
 
@@ -24,13 +24,13 @@ compiled against MRTOS.
 
 List of Hardware
 ----------------
-[STM32L0 Discovery Board] (http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF260319?sc=stm32l0-discovery)
-[Adafruit nRF8001 BLE Breakout](http://www.adafruit.com/products/1697)
+* [STM32L0 Discovery Board] (http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF260319?sc=stm32l0-discovery)
+* [Adafruit nRF8001 BLE Breakout](http://www.adafruit.com/products/1697)
 
 List of Sofware
 ---------------
-[GNU Arm Embedded Build Tools](https://launchpad.net/gcc-arm-embedded/+download)
-[OpenOCD](http://openocd.org/)
+* [GNU Arm Embedded Build Tools](https://launchpad.net/gcc-arm-embedded/+download)
+* [OpenOCD](http://openocd.org/)
 
 Getting Started
 ---------------
@@ -50,7 +50,7 @@ This contains template queue for MRTOS. queue.h contains the interface. The queu
 from the custom (and currently extremely simple) allocator found in utils.c. 
 
 ### task.c ###
-This contains the logic for creating and running multiple threads. The switch_context function can be changed allowing
+This contains the logic for creating and running multiple threads. The switch\_context function can be changed allowing
 for different types of scheduling. Interrupts must be setup on a board by board basis and so are configured in the
 port section.
 
@@ -63,6 +63,7 @@ folder.
 
 Folder Layout
 -------------
+```
 -MRTOS/
   -prj/
     +All the users source will go here
@@ -72,6 +73,7 @@ Folder Layout
     +MRTOS headers to include in your project
   -port/
     +All the platform dependent code, see porting guide for more information
+```
 
 
 Porting Guide
