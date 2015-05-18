@@ -36,6 +36,7 @@ Getting Started
 ---------------
 The following are steps to be able to build MRTOS on a linux machine. This can be extended to run on a Mac or Windows
 machine as well.
+
 1. Install GNU Arm Embedded Build tools
 2. Try compiling MRTOS using the provided example (just run make in the top directory)
 3. Install OpenOCD
