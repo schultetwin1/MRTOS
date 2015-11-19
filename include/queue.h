@@ -8,17 +8,15 @@
 typedef struct node node_t;
 struct node {
   node_t* next;
+  node_t* prev;
 };
 
-typedef int (*node_cmp_fn_t)(node_t*, node_t*);
-typedef struct queue queue_t;
+typedef node_t queue_t;
 
 queue_t*      queue_init();
-node_t*       queue_pop(queue_t* queue);
-const node_t* queue_top(const queue_t* queue);
-unsigned      queue_size(const queue_t* queue);
-
-void     queue_add(queue_t* queue, node_t* item, node_cmp_fn_t cmp);
-void     queue_remove(queue_t* queue, node_t* item);
+node_t*       queue_pop(queue_t* q);
+void          queue_push(queue_t* q, node_t* pushed);
+const node_t* queue_top(const queue_t* q);
+unsigned      queue_size(const queue_t* q);
 
 #endif
