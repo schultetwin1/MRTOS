@@ -3,6 +3,8 @@
 #include "drivers/timer.h"
 #include "queue.h"
 
+#include "pool.h"
+
 typedef void (*timer_fn_t)(void);
 
 typedef struct vtimer vtimer_t;
@@ -23,7 +25,4 @@ void vtimer_remove_timer(vtimer_t* timer);
 
 void vtimer_enable();
 void vtimer_disable();
-
-int vtimer_cmp(node_t* a, node_t* b);
-
 #endif

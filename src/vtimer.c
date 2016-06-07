@@ -1,16 +1,21 @@
 #include "vtimer.h"
 #include "drivers/gpio.h"
+#include "priority_queue.h"
 
-static queue_t* timer_queue;
+#define MAX_NUM_VTIMERS 100
+
+static priority_queue_t timer_queue;
+static block_t vtimers_queue[MAX_NUM_VTIMERS];
 static unsigned int tick = 0;
 
 static inline void update_timer(vtimer_t* timer);
+int vtimer_cmp(void* a, void* b);
 
 void  __attribute__ ((interrupt ("IRQ"))) timer_handler() {
   vtimer_t* victim;
   tick++;
-  while (queue_size(timer_queue) != 0 && tick >= ((vtimer_t*)(queue_top(timer_queue)))->cb_tick) {
-    victim = (vtimer_t*)queue_pop(timer_queue);
+  while (priority_queue_size(&timer_queue) != 0 && tick >= ((vtimer_t*)(priority_queue_peek(&timer_queue)))->cb_tick) {
+    victim = (vtimer_t*)priority_queue_remove(&timer_queue);
     victim->timer_cb();
     update_timer(victim);
   }
@@ -24,12 +29,12 @@ static inline void update_timer(vtimer_t* timer) {
       timer->num_runs--;
     }
     timer->cb_tick = tick + timer->ticks;
-    queue_add(timer_queue, (node_t*)timer, vtimer_cmp);
+    priority_queue_insert(&timer_queue, (node_t*)timer);
   }
 }
 
 void vtimer_init() {
-  timer_queue = queue_init();
+  priority_queue_init(&timer_queue, vtimer_cmp, vtimers_queue, MAX_NUM_VTIMERS);
   timer_init();
 }
 
@@ -41,7 +46,7 @@ void vtimer_add_timer(vtimer_t* vtimer, timer_fn_t callback, uint32_t ticks, uin
   vtimer->num_runs = num_runs;
 
   timer_mask_interrupt();
-  queue_add(timer_queue, (node_t*)vtimer, vtimer_cmp);
+  priority_queue_insert(&timer_queue, vtimer);
   timer_unmask_interrupt();
 }
 
@@ -57,6 +62,6 @@ void vtimer_disable() {
   timer_disable_interrupt();
 }
 
-int vtimer_cmp(node_t* a, node_t* b) {
+int vtimer_cmp(void* a, void* b) {
   return ((vtimer_t*)(a))->cb_tick - ((vtimer_t*)(b))->cb_tick;
 }

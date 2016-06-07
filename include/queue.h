@@ -13,7 +13,7 @@ struct node {
 
 typedef node_t queue_t;
 
-queue_t*      queue_init();
+void          queue_init(queue_t* q);
 node_t*       queue_pop(queue_t* q);
 void          queue_push(queue_t* q, node_t* pushed);
 const node_t* queue_top(const queue_t* q);
