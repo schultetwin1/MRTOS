@@ -1,63 +1,44 @@
 #include "queue.h"
 #include "utils.h"
+#include <stdbool.h>
 
-struct queue {
-  node_t* head;
-};
-
-queue_t* queue_init() {
-  queue_t* self = malloc(sizeof(queue_t));
-  self->head = NULL;
-  return self;
+inline bool queue_empty(const queue_t* q) {
+  return q->next == q;
 }
 
-node_t* queue_pop(queue_t* queue) {
-  node_t* popped = queue->head;
-  queue->head = queue->head->next;
+void queue_init(queue_t* self) {
+  self->next = self->next;
+  self->prev = self->prev;
+}
+
+node_t* queue_pop(queue_t* q) {
+  ASSERT(!queue_empty(q));
+  node_t* popped = q->next;
+  q->next = popped->next;
+  q->next->prev = q;
+  popped->next = NULL;
+  popped->prev = NULL;
   return popped;
 }
 
-const node_t* queue_top(const queue_t* queue) {
-  return queue->head;
+void queue_push(queue_t* q, node_t* pushed) {
+  pushed->prev = q->prev;
+  pushed->next = q;
+  q->prev->next = pushed;
+  q->prev = pushed;
 }
 
-unsigned queue_size(const queue_t* queue) {
-  const node_t* it = queue->head;
-  while (it) {
-    it++;
-  }
-  return it - queue->head;
+const node_t* queue_top(const queue_t* q) {
+  ASSERT(!queue_empty(q));
+  return q->next;
 }
 
-void queue_add(queue_t* queue, node_t* item, node_cmp_fn_t cmp) {
-  node_t* it;
-  node_t* it_prev;
-
-  // Empty case
-  if (queue_size(queue) == 0) {
-    queue->head = item;
-    item->next = 0;
-    return;
-  }
-
-  // Insert at front
-  if (cmp(item, queue->head) < 0) {
-    item->next = queue->head;
-    queue->head = item;
-    return;
-  }
-
-  // Insert anywhere else
-  it = queue->head->next;
-  it_prev = queue->head;
-  while (it && cmp(item, it) < 0) {
+unsigned queue_size(const queue_t* q) {
+  unsigned size = 0;
+  const node_t* it = q->next;
+  while (it != q) {
     it = it->next;
+    size++;
   }
-  it_prev->next = item;
-  item->next = it;
-  return;
-}
-
-void queue_remove(queue_t* queue, node_t* item) {
-
+  return size;
 }

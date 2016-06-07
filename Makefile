@@ -18,7 +18,7 @@ endif
 PORT_DIR ?= port/gcc/m0+
 
 SRC_DIRS := src $(PORT_DIR) $(PORT_DIR)/drivers prj/watch
-HDR_DIRS := inc $(PORT_DIR)/inc
+HDR_DIRS := include $(PORT_DIR)/include
 SRCS := $(foreach dir, $(SRC_DIRS), $(wildcard $(dir)/*.c))
 HDRS := $(foreach dir, $(HDRS_DIRS), $(wildcard $(dir)/*.h))
 OBJS := $(addprefix $(BUILD_DIR)/, $(addsuffix .o, $(basename $(notdir $(SRCS)))))
@@ -77,7 +77,7 @@ $(BUILD_DIR)/%.elf $(BUILD_DIR)/%.map: $(BUILD_DIR) $(OBJS) $(LDSCRIPT)
 $(BUILD_DIR)/%.o: src/%.c Makefile
 	$(CC) $(CFLAGS) $(ARCH_FLAGS) $(FP_FLAGS) -o $@ -c $<
 
-$(BUILD_DIR)/%.o: prj/%.c Makefile
+$(BUILD_DIR)/%.o: prj/watch/%.c Makefile
 	$(CC) $(CFLAGS) $(ARCH_FLAGS) $(FP_FLAGS) -o $@ -c $<
 
 $(BUILD_DIR)/%.o: $(PORT_DIR)/%.c Makefile
