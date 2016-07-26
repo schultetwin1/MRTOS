@@ -210,7 +210,7 @@ static USARTx_t volatile * const USART1 = (USARTx_t volatile * const)(0x40013800
 // Pin A9  = USART1_TX (AF4)
 // Pin A10 = USART1_RX (AF4)
 
-static USARTx_t volatile * const USART2 = (USARTx_t volatile * const)(0x40004400);
+static USARTx_t volatile * const USART2 __attribute((unused)) = (USARTx_t volatile * const)(0x40004400);
 
 void uart_init() {
   // Enable USART1 clock
